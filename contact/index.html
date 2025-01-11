@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacts</title>
-    <h1>contacts</h1>
+    <title>Contact</title>
+    <h1>Contact</h1>
+    <form action="mailto:dmansperger@ucsd.edu" method="POST" encytype="'text/plain">
+        <label>Email
+            <input name="email" type="email">
+        </label>
+        <label>Subject
+            <input name="subject">
+        </label>
+        <label>Body
+            <textarea name="body"></textarea>
+        </label>
+        <button>Submit</button>
+    </form>
     <nav>
         <a href="../index.html">Title Page</a>
         <a href="../projects/index.html">Projects</a>
