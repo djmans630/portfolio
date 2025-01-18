@@ -10,6 +10,17 @@ button{
     font: inherit;
 }
 
+form {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form label{
+    display: block;
+    margin-block: 10px;
+}
+
 body {
     /* Set line height to 1.5 times the font size
          and use the OS’s UI font as the website font
