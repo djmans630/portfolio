@@ -8,12 +8,25 @@ body {
     padding: 15px;
   }
 
-  nav {
+  ul,
+  ul > li {
     display: contents;
-
   }
 
   a {
     display: flex;
     flex: 1;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    padding: 0.5em;
+    margin-bottom: 10px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: oklch(80% 3% 200);
+  }
+
+  .current{
+    border-bottom: 0.4em solid oklch(80% 3% 200);
+    padding-bottom: 0.2em;
   }
