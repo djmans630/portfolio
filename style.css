@@ -7,3 +7,13 @@ body {
     margin-inline: auto;
     padding: 15px;
   }
+
+  nav {
+    display: contents;
+
+  }
+
+  a {
+    display: flex;
+    flex: 1;
+  }
