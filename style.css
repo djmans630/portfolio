@@ -13,7 +13,7 @@ body {
     display: contents;
   }
 
-  a.current {
+  nav {
     display: flex;
     flex: 1;
     text-decoration: none;
@@ -26,7 +26,7 @@ body {
     border-bottom-color: oklch(80% 3% 200);
   }
 
-  .thispage{
+  .current{
     border-bottom: 0.4em solid oklch(80% 3% 200);
     padding-bottom: 0.2em;
   }
