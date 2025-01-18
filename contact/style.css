@@ -10,15 +10,20 @@ button{
     font: inherit;
 }
 
+
 form {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em;
 }
 
 form label{
-    display: block;
-    margin-block: 10px;
+    grid-template-columns: subgrid;
+    grid-column: 1/-1;
+}
+
+button{
+    grid-column: 1/-1;
 }
 
 body {
