@@ -30,3 +30,11 @@ body {
     border-bottom: 0.4em solid oklch(80% 3% 200);
     padding-bottom: 0.2em;
   }
+
+  :root:{
+    --color-accent: oklch(40% 0.15 240);
+  }
+
+  html{
+    accent-color: var(--color-accent);
+  }
