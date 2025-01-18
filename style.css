@@ -41,3 +41,8 @@ body {
   html{
     accent-color: var(--color-accent);
   }
+
+  a:hover{
+    border-bottom: 0.4em solid var(--color-accent);
+    padding-bottom: 0.2em;
+  }
