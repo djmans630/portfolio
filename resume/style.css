@@ -14,6 +14,7 @@ body {
   }
 
   nav {
+    --border-color: oklch(50% 10% 200 / 40%);
     display: flex;
     text-decoration: none;
     color: inherit;
@@ -22,7 +23,8 @@ body {
     margin-bottom: 10px;
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: oklch(80% 3% 200);
+    /*border-bottom-color: oklch(80% 3% 200);*/
+    border-bottom-color: var(--border-color);
   }
 
   a {
@@ -40,6 +42,7 @@ body {
 
   html{
     accent-color: var(--color-accent);
+    color-scheme: dark;
   }
 
   a:hover{
