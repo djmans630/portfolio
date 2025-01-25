@@ -49,3 +49,11 @@ body {
     border-bottom: 0.4em solid var(--color-accent);
     padding-bottom: 0.2em;
   }
+
+  label.color-scheme{
+    position:absolute;
+    top:.5rem;
+    right:1rem;
+    font-size:80%;
+    font-family:inherit;
+  }

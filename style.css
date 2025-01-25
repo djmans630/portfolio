@@ -52,8 +52,8 @@ body {
 
   label.color-scheme{
     position:absolute;
-    top:2rem;
-    right:2rem;
+    top:.5rem;
+    right:1rem;
     font-size:80%;
     font-family:inherit;
   }
