@@ -8,6 +8,7 @@ async function loadLatestProjects() {
 
 async function loadGitHubStats() {
     const githubData = await fetchGitHubData('djmans630');
+    const profileStats = document.querySelector('#profile-stats');
 }
 
 loadLatestProjects();
