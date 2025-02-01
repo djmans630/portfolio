@@ -13,12 +13,12 @@ function $$(selector, context = document) {
 const ARE_WE_HOME = document.documentElement.classList.contains('home');
 
 let pages = [
-    { url: '', title: 'Home' },
-    { url: 'projects/', title: 'Projects' },
-    { url: 'contact/', title: 'Contact'},
-    { url: 'resume/', title: 'Resume'},
-    { url: "https://github.com/djmans630", title: 'Profile'}
-  ];
+  { url: '/', title: 'Home' },
+  { url: '/projects/', title: 'Projects' },
+  { url: '/contact/', title: 'Contact' },
+  { url: '/resume/', title: 'Resume' },
+  { url: "https://github.com/djmans630", title: 'Profile' }
+];
 
 let nav = document.createElement('nav');
 document.body.prepend(nav);
