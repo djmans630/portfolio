@@ -1,7 +1,7 @@
 [
     {
         "title": "USA East vs. West Coast Average Monthly Rainfall",
-        "image": "./lib/images/Project 1 Graph.jpg",
+        "image": "/portfolio/lib/images/my-image.jpg",
         "description": "A Graph of US Climate Data Showing just how much more Rain the East Coast gets",
         "year": "2025"
     },
