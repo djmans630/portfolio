@@ -57,3 +57,31 @@ body {
     font-size:80%;
     font-family:inherit;
   }
+
+  #profile-stats {
+    background-color: #222;
+    color: #fff;
+    padding: 1em;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#profile-stats dl {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: left;
+}
+
+#profile-stats dt {
+    font-weight: bold;
+    grid-row: 1;
+}
+
+#profile-stats dd {
+    margin: 0;
+    text-align: right;
+    grid-row: 2;
+}
