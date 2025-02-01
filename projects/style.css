@@ -82,10 +82,10 @@ body {
     font-family:inherit;
   }
 
-  img {
-    max-width: 100%;  /* Ensures the image is never wider than its container */
+  .project-image {
+    max-width: 100%;  /* Ensures the image fits inside its container */
     height: auto;  /* Maintains aspect ratio */
-    max-height: 300px;  /* Limits the height (adjust as needed) */
-    object-fit: cover;  /* Ensures images fill the space nicely */
-    border-radius: 8px;  /* Optional: Adds rounded corners for aesthetics */
+    max-height: 250px;  /* Adjust this value as needed */
+    object-fit: cover;  /* Ensures images fit nicely */
+    border-radius: 8px;  /* Optional: Adds rounded corners */
 }
