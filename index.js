@@ -5,4 +5,10 @@ async function loadLatestProjects() {
     const projectsContainer = document.querySelector('.projects');
     renderProjects(latestProjects, projectsContainer, 'h2');    
 }
+
+async function loadGitHubStats() {
+    const githubData = await fetchGitHubData('djmans630');
+}
+
 loadLatestProjects();
+loadGitHubStats();
