@@ -38,18 +38,15 @@ function renderPieChart(data) {
 
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
     const newSliceGenerator = d3.pie().value(d => d.value);
-
-    // ✅ Set innerRadius to 0 to remove the black dot
-    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(80);
-
     const newArcData = newSliceGenerator(data);
+    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(80);
 
     // Append pie slices
     newArcData.forEach((d, idx) => {
         newSVG.append('path')
             .attr('d', newArcGenerator(d))
             .attr('fill', colors(idx))
-            .attr('transform', 'translate(0, 0)') // Center the pie chart
+            .attr('transform', 'translate(0, 0)') 
             .attr('class', selectedIndex === idx ? 'selected' : '')  
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;  
@@ -60,8 +57,11 @@ function renderPieChart(data) {
     // Append legend items
     data.forEach((d, idx) => {
         newLegend.append('li')
-            .attr('class', selectedIndex === idx ? 'selected' : '')
-            .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
+            .attr('class', 'legend-item') // Add a class for styling
+            .html(`
+                <span class="swatch" style="background-color:${colors(idx)};"></span>
+                ${d.label} <em>(${d.value})</em>
+            `)
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;
                 updateSelection(); 

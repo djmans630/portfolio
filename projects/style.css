@@ -91,10 +91,10 @@ body {
 }
 
 #projects-pie-plot {
-  flex-shrink: 0;
-  width: 200px; /* Increased size for visibility */
-  height: 200px;
-  margin: auto; /* Center horizontally */
+  display: block;
+  margin: auto; /* Center the SVG */
+  width: 200px; /* Ensure it's a square */
+  height: auto; /* Maintain aspect ratio */
 }
 
 #projects-pie-plot:has(path:hover) path:not(:hover) {
@@ -102,15 +102,15 @@ body {
 }
 
 .legend {
-  display: flex; /* Align items in a row */
-  flex-wrap: wrap; /* Allow wrapping for small screens */
-  justify-content: center; /* Center-align the legend */
-  gap: 1em; /* Spacing between items */
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center; 
+  gap: 1em; 
   padding: 10px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   border: 1px solid #ccc;
-  max-width: 300px; /* Constrain legend width */
+  max-width: 300px;
 }
 
 .legend-item {
@@ -118,6 +118,7 @@ body {
   align-items: center;
   gap: 0.5em;
 }
+
 
 .legend-item .swatch {
   width: 1em;
