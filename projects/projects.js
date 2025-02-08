@@ -7,7 +7,7 @@ let selectedIndex = -1;
 
 async function loadProjects() {
     projects = await fetchJSON('../lib/projects.json');
-
+    console.log("Projects loaded:", projects);
     const projectsContainer = document.querySelector('.projects');
     const projectsTitle = document.querySelector('.projects-title');
 
@@ -33,6 +33,7 @@ async function loadProjects() {
 
 // ✅ Render Pie Chart with Correct Transformations
 function renderPieChart(filteredProjects) {
+    console.log("Rendering pie chart with data:", filteredProjects);
     let rolledData = d3.rollups(
         filteredProjects,
         (v) => v.length,
@@ -91,6 +92,8 @@ function renderPieChart(filteredProjects) {
                 updateSelection(); 
             });
     });
+
+    console.log("Legend element content:", document.querySelector('.legend').innerHTML);
 }
 
 // ✅ Ensure selection filtering works correctly
@@ -119,8 +122,16 @@ document.querySelector('.searchBar').addEventListener('input', (event) => {
         return values.includes(query);
     });
 
+    console.log("Filtered projects:", filteredProjects); // Debugging
+
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
-    renderPieChart(filteredProjects); 
+
+    // ✅ Only update pie chart if results exist
+    if (filteredProjects.length > 0) {
+        renderPieChart(filteredProjects);
+    } else {
+        console.log("No projects found, keeping pie chart.");
+    }
 });
 
 loadProjects();
