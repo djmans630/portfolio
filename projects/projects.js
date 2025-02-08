@@ -11,61 +11,61 @@ async function loadProjects() {
     const projectsContainer = document.querySelector('.projects');
     const projectsTitle = document.querySelector('.projects-title');
 
-    const projectCount = projects.length; // Calculate project count
-    projectsTitle.textContent = `${projectCount} Projects`; // Update the title dynamically
+    const projectCount = projects.length;
+    projectsTitle.textContent = `${projectCount} Projects`; // Show count
 
     renderProjects(projects, projectsContainer, 'h2');
 
+    // ✅ Corrected rolling data grouping
     let rolledData = d3.rollups(
         projects,
         (v) => v.length,
-        (d) => d.year
+        (d) => d.year.toString()
     );
 
     let data = rolledData.map(([year, count]) => ({
         value: count,
-        label: year.toString()
+        label: year
     }));
 
-    renderPieChart(data);
+    renderPieChart(data); // ✅ Ensure the pie chart renders initially
 }
 
-// ✅ Step 2: Render Pie Chart
-async function renderPieChart(filteredProjects) {
+// ✅ Render Pie Chart with Correct Transformations
+function renderPieChart(filteredProjects) {
     let rolledData = d3.rollups(
         filteredProjects,
         (v) => v.length,
-        (d) => d.year
+        (d) => d.year.toString()
     );
 
     let data = rolledData.map(([year, count]) => ({
         value: count,
-        label: year.toString()
+        label: year
     }));
 
     const newSVG = d3.select('#projects-pie-plot');
-    newSVG.selectAll('path').remove(); 
+    newSVG.selectAll('*').remove(); // ✅ Ensure everything is cleared before re-rendering
+
     const newLegend = d3.select('.legend').html('');
 
     if (data.length === 0) {
-        // ✅ Handle empty dataset
         newSVG.append('text')
             .attr('x', 0)
             .attr('y', 0)
             .attr('text-anchor', 'middle')
             .text('No data to display');
 
-        newLegend.append('li')
-            .text('No projects found');
-        return; // Exit the function early
+        newLegend.append('li').text('No projects found');
+        return; 
     }
 
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
     const newSliceGenerator = d3.pie().value(d => d.value);
     const newArcData = newSliceGenerator(data);
-    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(80);
+    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(45); // ✅ Fixed radius issue
 
-    // Append pie slices
+    // ✅ Append pie slices correctly
     newArcData.forEach((d, idx) => {
         newSVG.append('path')
             .attr('d', newArcGenerator(d))
@@ -78,12 +78,12 @@ async function renderPieChart(filteredProjects) {
             });
     });
 
-    // Append legend items
+    // ✅ Append legend items correctly
     data.forEach((d, idx) => {
         newLegend.append('li')
             .attr('class', 'legend-item') 
             .html(`
-                <span class="swatch" style="background-color:${colors(idx)};"></span>
+                <span class="swatch" style="background-color:${colors(idx)}; width: 1em; height: 1em; display: inline-block; border-radius: 3px;"></span>
                 ${d.label} <em>(${d.value})</em>
             `)
             .on('click', () => {
@@ -93,24 +93,20 @@ async function renderPieChart(filteredProjects) {
     });
 }
 
+// ✅ Ensure projects display correctly
 function renderProjects(projects, containerElement, headingLevel = 'h2') {
-    // Validate that containerElement is a valid DOM element
     if (!(containerElement instanceof HTMLElement)) {
         console.error('Invalid container element provided.');
         return;
     }
 
-    // Clear the container before rendering
     containerElement.innerHTML = '';
 
-    // Check if there are any projects to display
     if (projects.length === 0) {
-        // Display a fallback message when no projects match
         containerElement.innerHTML = '<p class="no-projects-message">No projects match your search.</p>';
         return;
     }
 
-    // Render each project dynamically
     projects.forEach(project => {
         const article = document.createElement('article');
         article.innerHTML = `
@@ -122,38 +118,34 @@ function renderProjects(projects, containerElement, headingLevel = 'h2') {
     });
 }
 
-
+// ✅ Ensure selection filtering works correctly
 async function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
 
-    // Update pie slices and legend items
     svg.selectAll('path').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
     legend.selectAll('li').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
 
-    // Filter projects based on selection
     if (selectedIndex === -1) {
-        renderProjects(projects, document.querySelector('.projects'), 'h2'); // Reset to all projects
+        renderProjects(projects, document.querySelector('.projects'), 'h2');
     } else {
-        let selectedYear = legend.select('.selected').text().split(" ")[0]; // Get year from legend
-        let filteredProjects = projects.filter(p => p.year === selectedYear);
+        let selectedYear = legend.select('.selected').text().split(" ")[0]; 
+        let filteredProjects = projects.filter(p => p.year.toString() === selectedYear);
         renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
     }
 }
 
+// ✅ Fix search bar behavior
 document.querySelector('.searchBar').addEventListener('input', (event) => {
-    query = event.target.value.toLowerCase(); // Normalize query for case-insensitive search
+    query = event.target.value.toLowerCase();
 
     let filteredProjects = projects.filter((project) => {
-        let values = Object.values(project).join('\n').toLowerCase(); // Search all metadata
+        let values = Object.values(project).join('\n').toLowerCase();
         return values.includes(query);
     });
 
-    // Render the filtered projects
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
-    
-    // Update the pie chart and legend dynamically
-    renderPieChart(filteredProjects);
+    renderPieChart(filteredProjects); 
 });
 
 loadProjects();
