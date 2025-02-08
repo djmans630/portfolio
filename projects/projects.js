@@ -93,18 +93,32 @@ async function renderPieChart(filteredProjects) {
     });
 }
 
-    // Append legend items
-    data.forEach((d, idx) => {
-        newLegend.append('li')
-            .attr('class', 'legend-item') 
-            .html(`
-                <span class="swatch" style="background-color:${colors(idx)};"></span>
-                ${d.label} <em>(${d.value})</em>
-            `)
-            .on('click', () => {
-                selectedIndex = selectedIndex === idx ? -1 : idx;
-                updateSelection(); 
-            });
+function renderProjects(projects, containerElement, headingLevel = 'h2') {
+    // Validate that containerElement is a valid DOM element
+    if (!(containerElement instanceof HTMLElement)) {
+        console.error('Invalid container element provided.');
+        return;
+    }
+
+    // Clear the container before rendering
+    containerElement.innerHTML = '';
+
+    // Check if there are any projects to display
+    if (projects.length === 0) {
+        // Display a fallback message when no projects match
+        containerElement.innerHTML = '<p class="no-projects-message">No projects match your search.</p>';
+        return;
+    }
+
+    // Render each project dynamically
+    projects.forEach(project => {
+        const article = document.createElement('article');
+        article.innerHTML = `
+            <${headingLevel}>${project.title} (${project.year})</${headingLevel}>
+            <img class="project-image" src="${project.image}" alt="${project.title}">
+            <p>${project.description}</p>
+        `;
+        containerElement.appendChild(article);
     });
 }
 
@@ -113,16 +127,16 @@ async function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
 
-    // ✅ Update pie slices and legend items
+    // Update pie slices and legend items
     svg.selectAll('path').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
     legend.selectAll('li').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
 
-    // ✅ Filter projects based on selection
+    // Filter projects based on selection
     if (selectedIndex === -1) {
-        renderProjects(projects, document.querySelector('.projects'), 'h2');
+        renderProjects(projects, document.querySelector('.projects'), 'h2'); // Reset to all projects
     } else {
-        let selectedYear = d3.select('.legend .selected').text().trim().split(" ")[0]; 
-        let filteredProjects = projects.filter(p => p.year === selectedYear);  
+        let selectedYear = legend.select('.selected').text().split(" ")[0]; // Get year from legend
+        let filteredProjects = projects.filter(p => p.year === selectedYear);
         renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
     }
 }
