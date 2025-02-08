@@ -8,7 +8,7 @@ async function loadProjects() {
     const projectText = projects.length === 1 ? 'project' : 'projects';
     projectsTitle.textContent = `${projects.length} ${projectText}`;
     renderProjects(projects, projectsContainer, 'h2');
-    generatePieChart(projects);
+    renderPieChart(projects);
 
     let rolledData = d3.rollups(
         projects,
@@ -20,7 +20,7 @@ async function loadProjects() {
         value: count,
         label: year
     }));
-    generatePieChart(data);
+    renderPieChart(data);
 }
 
 // let arc = d3.arc().innerRadius(0).outerRadius(50)({
@@ -28,66 +28,50 @@ async function loadProjects() {
 //   endAngle: 2 * Math.PI,
 // });
 // d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
-function generatePieChart(data) {
-    //let total = 0;
+function renderPieChart(data) {
+    let newRolledData = d3.rollups(
+        projectsGiven,
+        (v) => v.length,
+        (d) => d.year
+    );
+
+    let newData = newRolledData.map(([year, count]) => ({
+        value: count,
+        label: year
+    }));
+
+    let newSVG = d3.select('#projects-pie-plot').html('');
+    let newLegend = d3.select('.legend').html('');
     let colors = d3.scaleOrdinal(d3.schemeTableau10);
-    // for (let d of data) {
-    //   total += d;
-    // }
+    let newSliceGenerator = d3.pie().value(d => d.value);
+    let newArcData = newSliceGenerator(newData);
+    let newArcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-    // let angle = 0;
-    // let arcData = [];
-    // for (let d of data) {
-    //     let endAngle = angle + (d / total) * 2 * Math.PI;
-    //     arcData.push({ startAngle: angle, endAngle });
-    //     angle = endAngle;
-    //   }
-    let svg = d3.select('#projects-pie-plot').html('');
-    let sliceGenerator = d3.pie().value(d => d.value);
-    let arcDataNew = sliceGenerator(data);
-    let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-    // let arcs = arcData.map((d) => arcGenerator(d));
-
-    // arcs.forEach((arc, idx) => {
-    //     svg.append('path')
-    //       .attr('d', arc)
-    //       .attr('fill', colors(idx))
-    //       .attr('transform', 'translate(60, 60)');
-    //   });
-
-    // let arcsNew = arcDataNew.map((d) => arcGenerator(d));
-
-    arcDataNew.forEach((d, idx) => {
-        svg.append('path')
-            .attr('d', arcGenerator(d))
+    newArcData.forEach((d, idx) => {
+        newSVG.append('path')
+            .attr('d', newArcGenerator(d))
             .attr('fill', colors(idx))
-            .attr('transform', 'translate(50, 50)'); // Centering properly
+            .attr('transform', 'translate(50, 50)'); 
     });
 
-    let legend = d3.select('.legend').html('');
-
-    data.forEach((d, idx) => {
-        legend.append('li')
-            .attr('style', `--color:${colors(idx)}`)
+    newData.forEach((d, idx) => {
+        newLegend.append('li')
+            .attr('style', `background-color: ${colors(idx)}`)
             .attr('class', 'legend-item')
             .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
     });
 }
 
-let query = ''; // ✅ Store search query
-let searchInput = document.querySelector('.searchBar');
-searchInput.addEventListener('input', (event) => {
-    query = event.target.value.toLowerCase(); // ✅ Normalize query for case-insensitive search
+document.querySelector('.searchBar').addEventListener('input', (event) => {
+    query = event.target.value.toLowerCase(); 
 
-    // ✅ Step 2.1: Filter projects dynamically
     let filteredProjects = projects.filter((project) => {
         let values = Object.values(project).join('\n').toLowerCase();
         return values.includes(query);
     });
 
-    // ✅ Step 2.2: Re-render projects & pie chart
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
-    renderPieChart(filteredProjects);
+    renderPieChart(filteredProjects); 
 });
 
 loadProjects();
