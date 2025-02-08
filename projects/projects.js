@@ -41,6 +41,7 @@ function renderPieChart(data) {
     }));
 
     let newSVG = d3.select('#projects-pie-plot').html('');
+    newSVG.selectAll('path').remove();
     let newLegend = d3.select('.legend').html('');
     let colors = d3.scaleOrdinal(d3.schemeTableau10);
     let newSliceGenerator = d3.pie().value(d => d.value);
