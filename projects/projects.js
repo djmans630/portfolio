@@ -10,11 +10,11 @@ async function loadProjects() {
     renderProjects(projects, projectsContainer, 'h2');
 }
 
-let arc = d3.arc().innerRadius(0).outerRadius(50)({
-  startAngle: 0,
-  endAngle: 2 * Math.PI,
-});
-d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
+// let arc = d3.arc().innerRadius(0).outerRadius(50)({
+//   startAngle: 0,
+//   endAngle: 2 * Math.PI,
+// });
+// d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 
 let data = [1, 2];
 let total = 0;
