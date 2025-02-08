@@ -91,10 +91,10 @@ body {
 }
 
 #projects-pie-plot {
-  display: block;
-  margin: auto;
-  width: 1200px;   /* Double size */
-  height: 1200px;  /* Ensure it's a square */
+  max-width: 20em;
+  margin-block: 2em;
+
+  overflow: visible;
 }
 
 #projects-pie-plot:has(path:hover) path:not(:hover) {

@@ -78,7 +78,7 @@ function renderPieChart(filteredProjects) {
             .attr('class', selectedIndex === idx ? 'selected' : '')  
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;  
-                updateSelection();  // ✅ Now correctly filters projects!
+                updateSelection(); // ✅ Ensure filtering is triggered
             });
     });
 
@@ -99,32 +99,36 @@ function renderPieChart(filteredProjects) {
     console.log("Legend element content:", document.querySelector('.legend').innerHTML);
 }
 
-// ✅ Ensure selection filtering works correctly
 async function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
 
-    // Update pie slices and legend items
+    // Update selected styles for pie slices and legend items
     svg.selectAll('path').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
     legend.selectAll('li').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
 
-    // Ensure selectedIndex is valid
     if (selectedIndex === -1) {
         renderProjects(projects, document.querySelector('.projects'), 'h2'); // Show all projects
-    } else {
-        // ✅ Correct way to get the year from the data array
-        let selectedYear = d3.selectAll('.legend-item')
-            .filter((_, idx) => idx === selectedIndex)
-            .data()[0]?.label; // Get the year label safely
-
-        if (!selectedYear) {
-            console.error("Error: Selected year not found.");
-            return;
-        }
-
-        let filteredProjects = projects.filter(p => p.year.toString() === selectedYear); // ✅ Ensure year comparison works
-        renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
+        return;
     }
+
+    // ✅ Correctly retrieve the selected year from the pie chart data
+    let selectedYear = d3.selectAll('.legend-item')
+        .filter((_, idx) => idx === selectedIndex)
+        .data()[0]?.label; // Get the year label safely
+
+    if (!selectedYear) {
+        console.error("Error: Selected year not found.");
+        return;
+    }
+
+    console.log(`Filtering for year: ${selectedYear}`); // Debugging log
+
+    // ✅ Ensure filtering matches the correct project year
+    let filteredProjects = projects.filter(p => p.year.toString() === selectedYear);
+
+    // ✅ Render only projects from the selected year
+    renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
 }
 
 // ✅ Fix search bar behavior

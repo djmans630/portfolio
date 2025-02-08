@@ -93,10 +93,3 @@ body {
   object-fit: cover;  /* Ensures images fit nicely */
   border-radius: 8px;  /* Optional: Adds rounded corners */
 }
-
-#projects-pie-plot {
-  display: block;
-  margin: auto;
-  width: 1200px;   /* Double size */
-  height: 1200px;  /* Ensure it's a square */
-}
