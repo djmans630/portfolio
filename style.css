@@ -97,6 +97,6 @@ body {
 #projects-pie-plot {
   display: block;
   margin: auto;
-  width: 800px;   /* Double size */
-  height: 800px;  /* Ensure it's a square */
+  width: 1200px;   /* Double size */
+  height: 1200px;  /* Ensure it's a square */
 }
