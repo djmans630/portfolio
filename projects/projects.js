@@ -93,31 +93,6 @@ function renderPieChart(filteredProjects) {
     });
 }
 
-// ✅ Ensure projects display correctly
-function renderProjects(projects, containerElement, headingLevel = 'h2') {
-    if (!(containerElement instanceof HTMLElement)) {
-        console.error('Invalid container element provided.');
-        return;
-    }
-
-    containerElement.innerHTML = '';
-
-    if (projects.length === 0) {
-        containerElement.innerHTML = '<p class="no-projects-message">No projects match your search.</p>';
-        return;
-    }
-
-    projects.forEach(project => {
-        const article = document.createElement('article');
-        article.innerHTML = `
-            <${headingLevel}>${project.title} (${project.year})</${headingLevel}>
-            <img class="project-image" src="${project.image}" alt="${project.title}">
-            <p>${project.description}</p>
-        `;
-        containerElement.appendChild(article);
-    });
-}
-
 // ✅ Ensure selection filtering works correctly
 async function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
