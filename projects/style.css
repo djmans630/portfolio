@@ -117,7 +117,7 @@ body {
 .legend-item .swatch {
   width: 1em;
   height: 1em;
-  background-color: var(--color);
+  background: var(--color);
   border-radius: 4px; 
   display: inline-block;
 }

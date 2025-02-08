@@ -60,7 +60,7 @@ function generatePieChart(data) {
         svg.append('path')
             .attr('d', arcGenerator(d))
             .attr('fill', colors(idx))
-            .attr('transform', 'translate(0, 0)'); // Centering properly
+            .attr('transform', 'translate(50, 50)'); // Centering properly
     });
 
     let legend = d3.select('.legend').html('');
