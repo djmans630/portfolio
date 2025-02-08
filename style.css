@@ -93,3 +93,10 @@ body {
   object-fit: cover;  /* Ensures images fit nicely */
   border-radius: 8px;  /* Optional: Adds rounded corners */
 }
+
+#projects-pie-plot {
+  max-width: 20em;
+  margin-block: 2em;
+
+  overflow: visible;
+}
