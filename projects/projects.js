@@ -38,7 +38,7 @@ let colors = d3.scaleOrdinal(d3.schemeTableau10);
 //     angle = endAngle;
 //   }
 let svg = d3.select('svg');
-let sliceGenerator = d3.pie().value((d) => d.value);
+let sliceGenerator = d3.pie().value(d => d.value);
 let arcDataNew = sliceGenerator(data);
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 // let arcs = arcData.map((d) => arcGenerator(d));
@@ -47,7 +47,7 @@ let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 //     svg.append('path')
 //       .attr('d', arc)
 //       .attr('fill', colors(idx))
-//       .attr('transform', 'translate(60, 60)'); // Centering the pie chart
+//       .attr('transform', 'translate(60, 60)');
 //   });
 
 // let arcsNew = arcDataNew.map((d) => arcGenerator(d));
@@ -62,8 +62,11 @@ arcDataNew.forEach((d, idx) => {
 let legend = d3.select('.legend');
 data.forEach((d, idx) => {
     legend.append('li')
-          .attr('style', `--color:${colors(idx)}`) // set the style attribute while passing in parameters
-          .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`); // set the inner html of <li>
-})
+          .attr('style', `--color:${colors(idx)}`) 
+          .attr('class', 'legend-item') 
+          .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+});
+
+
 
 loadProjects();

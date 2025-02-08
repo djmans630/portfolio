@@ -96,3 +96,29 @@ body {
 
   overflow: visible;
 }
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+  gap: 1em;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  max-width: 300px;
+  margin-top: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.legend-item .swatch {
+  width: 1em;
+  height: 1em;
+  background-color: var(--color);
+  border-radius: 4px; 
+  display: inline-block;
+}
