@@ -16,7 +16,7 @@ async function loadProjects() {
 // });
 // d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 
-let data = [1, 2];
+let data = [1, 2, 3, 4, 5, 5];
 let total = 0;
 for (let d of data) {
   total += d;
