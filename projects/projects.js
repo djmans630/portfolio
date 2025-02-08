@@ -78,7 +78,7 @@ function renderPieChart(filteredProjects) {
             .attr('class', selectedIndex === idx ? 'selected' : '')  
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;  
-                updateSelection(); 
+                updateSelection();  // ✅ Now correctly filters projects!
             });
     });
 
@@ -104,14 +104,25 @@ async function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
 
+    // Update pie slices and legend items
     svg.selectAll('path').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
     legend.selectAll('li').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
 
+    // Ensure selectedIndex is valid
     if (selectedIndex === -1) {
-        renderProjects(projects, document.querySelector('.projects'), 'h2');
+        renderProjects(projects, document.querySelector('.projects'), 'h2'); // Show all projects
     } else {
-        let selectedYear = legend.select('.selected').text().split(" ")[0]; 
-        let filteredProjects = projects.filter(p => p.year.toString() === selectedYear);
+        // ✅ Correct way to get the year from the data array
+        let selectedYear = d3.selectAll('.legend-item')
+            .filter((_, idx) => idx === selectedIndex)
+            .data()[0]?.label; // Get the year label safely
+
+        if (!selectedYear) {
+            console.error("Error: Selected year not found.");
+            return;
+        }
+
+        let filteredProjects = projects.filter(p => p.year.toString() === selectedYear); // ✅ Ensure year comparison works
         renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
     }
 }
