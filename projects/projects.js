@@ -34,11 +34,14 @@ async function loadProjects() {
 // ✅ Render Pie Chart with Correct Transformations
 function renderPieChart(filteredProjects) {
     console.log("Rendering pie chart with data:", filteredProjects);
+    console.log("Projects Passed to Pie Chart:", filteredProjects);
     let rolledData = d3.rollups(
         filteredProjects,
         (v) => v.length,
         (d) => d.year.toString()
     );
+
+    console.log("Rolled Data:", rolledData);
 
     let data = rolledData.map(([year, count]) => ({
         value: count,
