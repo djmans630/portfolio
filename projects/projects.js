@@ -8,6 +8,7 @@ async function loadProjects() {
     const projectText = projects.length === 1 ? 'project' : 'projects';
     projectsTitle.textContent = `${projects.length} ${projectText}`;
     renderProjects(projects, projectsContainer, 'h2');
+    generatePieChart(projects);
 
     let rolledData = d3.rollups(
         projects,
@@ -72,5 +73,21 @@ function generatePieChart(data) {
             .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
     });
 }
+
+let query = ''; // ✅ Store search query
+let searchInput = document.querySelector('.searchBar');
+searchInput.addEventListener('input', (event) => {
+    query = event.target.value.toLowerCase(); // ✅ Normalize query for case-insensitive search
+
+    // ✅ Step 2.1: Filter projects dynamically
+    let filteredProjects = projects.filter((project) => {
+        let values = Object.values(project).join('\n').toLowerCase();
+        return values.includes(query);
+    });
+
+    // ✅ Step 2.2: Re-render projects & pie chart
+    renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
+    renderPieChart(filteredProjects);
+});
 
 loadProjects();
