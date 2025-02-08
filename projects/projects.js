@@ -50,7 +50,7 @@ arcsNew.forEach((arc, idx) => {
   svg.append('path')
     .attr('d', arc)
     .attr('fill', colors[idx])
-    .attr('transform', 'translate(60, 60)');
+    .attr('transform', 'translate(0, 0)');
 });
 
 loadProjects();
