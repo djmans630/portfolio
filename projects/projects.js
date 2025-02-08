@@ -51,7 +51,7 @@ function renderPieChart(data) {
         newSVG.append('path')
             .attr('d', newArcGenerator(d))
             .attr('fill', colors(idx))
-            .attr('transform', 'translate(50, 50)'); 
+            .attr('transform', 'translate(0, 0)'); 
     });
 
     newData.forEach((d, idx) => {
