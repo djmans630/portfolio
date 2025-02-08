@@ -83,30 +83,29 @@ body {
   }
 
   .project-image {
-    max-width: 100%;  /* Ensures the image fits inside its container */
-    height: auto;  /* Maintains aspect ratio */
-    max-height: 250px;  /* Adjust this value as needed */
-    object-fit: cover;  /* Ensures images fit nicely */
-    border-radius: 8px;  /* Optional: Adds rounded corners */
+    max-width: 100%; 
+    height: auto; 
+    max-height: 250px;  
+    object-fit: cover;  
+    border-radius: 8px;  
 }
 
 #projects-pie-plot {
-  max-width: 20em;
-  margin-block: 2em;
-
-  overflow: visible;
+  flex-shrink: 0;  
+  width: 120px;
+  height: 120px;
 }
 
 .legend {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
-  gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr)); 
+  gap: 0.5em;
   padding: 10px;
   border: 1px solid #ccc;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  max-width: 300px;
-  margin-top: 15px;
+  max-width: 200px;  
+  flex: 1;  
 }
 
 .legend-item {
@@ -121,4 +120,13 @@ body {
   background-color: var(--color);
   border-radius: 4px; 
   display: inline-block;
+}
+
+.container {
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  gap: 1.5em;  
+  max-width: 600px; 
+  margin: auto;
 }
