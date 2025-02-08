@@ -18,6 +18,7 @@ async function loadProjects() {
 
 let data = [1, 2, 3, 4, 5, 5];
 let total = 0;
+let colors = d3.scaleOrdinal(d3.schemeTableau10);
 for (let d of data) {
   total += d;
 }
@@ -33,12 +34,11 @@ for (let d of data) {
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 let arcs = arcData.map((d) => arcGenerator(d));
 
-let colors = ['gold', 'purple'];
 let svg = d3.select('svg');
 arcs.forEach((arc, idx) => {
     svg.append('path')
       .attr('d', arc)
-      .attr('fill', colors[idx])
+      .attr('fill', colors(idx))
       .attr('transform', 'translate(60, 60)'); // Centering the pie chart
   });
 
@@ -49,7 +49,7 @@ let arcsNew = arcDataNew.map((d) => arcGenerator(d));
 arcsNew.forEach((arc, idx) => {
   svg.append('path')
     .attr('d', arc)
-    .attr('fill', colors[idx])
+    .attr('fill', colors(idx))
     .attr('transform', 'translate(0, 0)');
 });
 
