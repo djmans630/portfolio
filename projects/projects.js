@@ -17,38 +17,37 @@ async function loadProjects() {
 // d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 
 let data = [1, 2, 3, 4, 5, 5];
-let total = 0;
+//let total = 0;
 let colors = d3.scaleOrdinal(d3.schemeTableau10);
-for (let d of data) {
-  total += d;
-}
+// for (let d of data) {
+//   total += d;
+// }
 
-let angle = 0;
-let arcData = [];
-for (let d of data) {
-    let endAngle = angle + (d / total) * 2 * Math.PI;
-    arcData.push({ startAngle: angle, endAngle });
-    angle = endAngle;
-  }
-
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-let arcs = arcData.map((d) => arcGenerator(d));
-
+// let angle = 0;
+// let arcData = [];
+// for (let d of data) {
+//     let endAngle = angle + (d / total) * 2 * Math.PI;
+//     arcData.push({ startAngle: angle, endAngle });
+//     angle = endAngle;
+//   }
 let svg = d3.select('svg');
-arcs.forEach((arc, idx) => {
-    svg.append('path')
-      .attr('d', arc)
-      .attr('fill', colors(idx))
-      .attr('transform', 'translate(60, 60)'); // Centering the pie chart
-  });
-
 let sliceGenerator = d3.pie();
 let arcDataNew = sliceGenerator(data);
-let arcsNew = arcDataNew.map((d) => arcGenerator(d));
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+// let arcs = arcData.map((d) => arcGenerator(d));
 
-arcsNew.forEach((arc, idx) => {
+// arcs.forEach((arc, idx) => {
+//     svg.append('path')
+//       .attr('d', arc)
+//       .attr('fill', colors(idx))
+//       .attr('transform', 'translate(60, 60)'); // Centering the pie chart
+//   });
+
+// let arcsNew = arcDataNew.map((d) => arcGenerator(d));
+
+arcDataNew.forEach((d, idx) => {
   svg.append('path')
-    .attr('d', arc)
+    .attr('d', arcGenerator(d))
     .attr('fill', colors(idx))
     .attr('transform', 'translate(0, 0)');
 });
