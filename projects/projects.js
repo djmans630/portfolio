@@ -12,11 +12,10 @@ async function loadProjects() {
     const projectsTitle = document.querySelector('.projects-title');
 
     const projectCount = projects.length;
-    projectsTitle.textContent = `${projectCount} Projects`; // Show count
+    projectsTitle.textContent = `${projectCount} Projects`; 
 
     renderProjects(projects, projectsContainer, 'h2');
 
-    // ✅ Corrected rolling data grouping
     let rolledData = d3.rollups(
         projects,
         (v) => v.length,
@@ -31,7 +30,6 @@ async function loadProjects() {
     renderPieChart(projects);
 }
 
-// ✅ Render Pie Chart with Correct Transformations
 function renderPieChart(filteredProjects) {
     console.log("Rendering pie chart with data:", filteredProjects);
     console.log("Projects Passed to Pie Chart:", filteredProjects);
@@ -49,7 +47,7 @@ function renderPieChart(filteredProjects) {
     }));
 
     const newSVG = d3.select('#projects-pie-plot');
-    newSVG.selectAll('*').remove(); // ✅ Ensure everything is cleared before re-rendering
+    newSVG.selectAll('*').remove(); 
 
     const newLegend = d3.select('.legend').html('');
 
@@ -67,9 +65,8 @@ function renderPieChart(filteredProjects) {
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
     const newSliceGenerator = d3.pie().value(d => d.value);
     const newArcData = newSliceGenerator(data);
-    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(75); // ✅ Fixed radius issue
+    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(75); 
 
-    // ✅ Append pie slices correctly
     newArcData.forEach((d, idx) => {
         newSVG.append('path')
             .attr('d', newArcGenerator(d))
@@ -78,12 +75,11 @@ function renderPieChart(filteredProjects) {
             .attr('class', selectedIndex === idx ? 'selected' : '')  
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;
-                let selectedYear = data[idx].label;  // Capture the selected year
-                updateSelection(selectedYear);  // Pass the selected year to the filter function
+                let selectedYear = data[idx].label; 
+                updateSelection(selectedYear);  
             });
     });
 
-    // ✅ Append legend items correctly
     data.forEach((d, idx) => {
         newLegend.append('li')
             .attr('class', 'legend-item') 
@@ -104,20 +100,18 @@ async function updateSelection(selectedYear) {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
 
-    // Update pie slices and legend items
     svg.selectAll('path').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
     legend.selectAll('li').attr('class', (_, idx) => (idx === selectedIndex ? 'selected' : ''));
 
-    // Filter projects based on selection
+
     if (selectedIndex === -1) {
-        renderProjects(projects, document.querySelector('.projects'), 'h2'); // Reset to all projects
+        renderProjects(projects, document.querySelector('.projects'), 'h2'); 
     } else {
         let filteredProjects = projects.filter(p => p.year.toString() === selectedYear);
         renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
     }
 }
 
-// ✅ Fix search bar behavior
 document.querySelector('.searchBar').addEventListener('input', (event) => {
     query = event.target.value.toLowerCase();
 
@@ -126,11 +120,10 @@ document.querySelector('.searchBar').addEventListener('input', (event) => {
         return values.includes(query);
     });
 
-    console.log("Filtered projects:", filteredProjects); // Debugging
+    console.log("Filtered projects:", filteredProjects); 
 
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
 
-    // ✅ Only update pie chart if results exist
     if (filteredProjects.length > 0) {
         renderPieChart(filteredProjects);
     } else {
