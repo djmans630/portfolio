@@ -96,6 +96,10 @@ body {
   height: 120px;
 }
 
+#projects-pie-plot:has(path:hover) path:not(:hover) {
+  opacity: 0.5;
+}
+
 .legend {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9em, 1fr)); 
@@ -140,4 +144,22 @@ body {
   font-size: 1em;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+path {
+  transition: 300ms;
+  cursor: pointer;
+}
+
+.selected {
+  --color: oklch(60% 45% 0) !important; /* Change color when selected */
+}
+
+.selected:is(path) {
+  fill: var(--color);
+}
+
+.selected:is(li) {
+  font-weight: bold;
+  text-decoration: underline;
 }
