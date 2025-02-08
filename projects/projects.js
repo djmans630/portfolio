@@ -8,7 +8,6 @@ async function loadProjects() {
     const projectText = projects.length === 1 ? 'project' : 'projects';
     projectsTitle.textContent = `${projects.length} ${projectText}`;
     renderProjects(projects, projectsContainer, 'h2');
-    renderPieChart(projects);
 
     let rolledData = d3.rollups(
         projects,
@@ -30,7 +29,7 @@ async function loadProjects() {
 // d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 function renderPieChart(data) {
     let newRolledData = d3.rollups(
-        projectsGiven,
+        data,
         (v) => v.length,
         (d) => d.year
     );
