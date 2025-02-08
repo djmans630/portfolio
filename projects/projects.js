@@ -67,7 +67,7 @@ function renderPieChart(filteredProjects) {
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
     const newSliceGenerator = d3.pie().value(d => d.value);
     const newArcData = newSliceGenerator(data);
-    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(90); // ✅ Fixed radius issue
+    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(75); // ✅ Fixed radius issue
 
     // ✅ Append pie slices correctly
     newArcData.forEach((d, idx) => {
