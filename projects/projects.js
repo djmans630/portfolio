@@ -1,48 +1,55 @@
 import { fetchJSON, renderProjects } from '../global.js';
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
-let projects = [];  // ✅ Store all projects globally
-let query = '';  // ✅ Store search query
-let selectedIndex = -1;  // ✅ Store the selected pie slice index (-1 means none selected)
+let projects = [];  
+let query = '';  
+let selectedIndex = -1;  
 
-// ✅ Step 1: Load and Process Project Data
 async function loadProjects() {
-    projects = await fetchJSON('../lib/projects.json'); // ✅ Fetch project data
+    projects = await fetchJSON('../lib/projects.json');
 
-    renderProjects(projects, document.querySelector('.projects'), 'h2');
+    const projectsContainer = document.querySelector('.projects');
+    const projectsTitle = document.querySelector('.projects-title');
 
-    // ✅ Group projects by year and count them
+    const projectCount = projects.length; // Calculate project count
+    projectsTitle.textContent = `${projectCount} Projects`; // Update the title dynamically
+
+    renderProjects(projects, projectsContainer, 'h2');
+
     let rolledData = d3.rollups(
         projects,
-        (v) => v.length,  
-        (d) => d.year     
+        (v) => v.length,
+        (d) => d.year
     );
 
     let data = rolledData.map(([year, count]) => ({
         value: count,
-        label: year.toString()  // ✅ Ensure year is treated as a string
+        label: year.toString()
     }));
 
-    renderPieChart(data); // ✅ Render pie chart with processed data
+    renderPieChart(data);
 }
 
 // ✅ Step 2: Render Pie Chart
 function renderPieChart(data) {
-    let newSVG = d3.select('#projects-pie-plot');
-    newSVG.selectAll('path').remove(); // ✅ Clear previous paths
-    let newLegend = d3.select('.legend').html(''); // ✅ Clear previous legend
+    const newSVG = d3.select('#projects-pie-plot');
+    newSVG.selectAll('path').remove(); 
+    const newLegend = d3.select('.legend').html('');
 
-    let colors = d3.scaleOrdinal(d3.schemeTableau10);
-    let newSliceGenerator = d3.pie().value(d => d.value);
-    let newArcData = newSliceGenerator(data);
-    let newArcGenerator = d3.arc().innerRadius(10).outerRadius(45); // ✅ Increased size for visibility
+    const colors = d3.scaleOrdinal(d3.schemeTableau10);
+    const newSliceGenerator = d3.pie().value(d => d.value);
 
-    // ✅ Append pie slices with interactive click events
+    // ✅ Set innerRadius to 0 to remove the black dot
+    const newArcGenerator = d3.arc().innerRadius(0).outerRadius(80);
+
+    const newArcData = newSliceGenerator(data);
+
+    // Append pie slices
     newArcData.forEach((d, idx) => {
         newSVG.append('path')
             .attr('d', newArcGenerator(d))
             .attr('fill', colors(idx))
-            .attr('transform', 'translate(0, 0)') // ✅ Center properly
+            .attr('transform', 'translate(0, 0)') // Center the pie chart
             .attr('class', selectedIndex === idx ? 'selected' : '')  
             .on('click', () => {
                 selectedIndex = selectedIndex === idx ? -1 : idx;  
@@ -50,7 +57,7 @@ function renderPieChart(data) {
             });
     });
 
-    // ✅ Append legend items with interactive click events
+    // Append legend items
     data.forEach((d, idx) => {
         newLegend.append('li')
             .attr('class', selectedIndex === idx ? 'selected' : '')
@@ -62,7 +69,7 @@ function renderPieChart(data) {
     });
 }
 
-// ✅ Step 3: Update Selection When Clicking a Wedge or Legend Item
+
 function updateSelection() {
     let svg = d3.select('#projects-pie-plot');
     let legend = d3.select('.legend');
@@ -75,15 +82,14 @@ function updateSelection() {
     if (selectedIndex === -1) {
         renderProjects(projects, document.querySelector('.projects'), 'h2');
     } else {
-        let selectedYear = d3.select('.legend .selected').text().trim().split(" ")[0];  // ✅ Get selected year from legend
-        let filteredProjects = projects.filter(p => p.year === selectedYear);  // ✅ Filter projects
+        let selectedYear = d3.select('.legend .selected').text().trim().split(" ")[0]; 
+        let filteredProjects = projects.filter(p => p.year === selectedYear);  
         renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
     }
 }
 
-// ✅ Step 4: Search Functionality (Triggers Pie Chart Update)
 document.querySelector('.searchBar').addEventListener('input', (event) => {
-    query = event.target.value.toLowerCase(); // ✅ Normalize query for case-insensitive search
+    query = event.target.value.toLowerCase(); 
 
     let filteredProjects = projects.filter((project) => {
         let values = Object.values(project).join('\n').toLowerCase();
@@ -91,8 +97,7 @@ document.querySelector('.searchBar').addEventListener('input', (event) => {
     });
 
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
-    renderPieChart(filteredProjects); // ✅ Update pie chart dynamically
+    renderPieChart(filteredProjects); 
 });
 
-// ✅ Load Projects When Page Loads
 loadProjects();
