@@ -103,20 +103,23 @@ body {
 
 .legend {
   display: flex;
-  flex-wrap: wrap; 
-  justify-content: center; 
-  gap: 1em; 
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
   padding: 10px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   border: 1px solid #ccc;
-  max-width: 300px;
+  max-width: 600px; /* Increase max width */
+  min-width: 400px; /* Ensure it doesn't get too small */
+  flex-grow: 1; /* Allow it to expand as needed */
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 1em; /* Increase spacing between legend items */
+  min-width: 120px; /* Ensures each item has enough space */
 }
 
 
@@ -130,11 +133,12 @@ body {
 
 .container {
   display: flex;
-  align-items: center; 
-  justify-content: center; 
-  gap: 2em; /* Add spacing between the chart and legend */
-  max-width: 800px; /* Increased width for better layout */
-  margin: auto; /* Center the container */
+  align-items: center;
+  justify-content: center;
+  gap: 3em; /* Slightly increase gap */
+  max-width: 1000px; /* Give more room */
+  margin: auto;
+  flex-wrap: wrap; /* Allows wrapping if necessary */
 }
 
 .searchBar {
