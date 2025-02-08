@@ -28,7 +28,7 @@ async function loadProjects() {
         label: year
     }));
 
-    renderPieChart(data); // ✅ Ensure the pie chart renders initially
+    renderPieChart(projects);
 }
 
 // ✅ Render Pie Chart with Correct Transformations
