@@ -91,7 +91,7 @@ body {
 }
 
 #projects-pie-plot {
-  max-width: 100px;
+  max-width: 20em;
   margin-block: 2em;
 
   overflow: visible;
