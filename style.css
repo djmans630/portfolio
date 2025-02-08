@@ -95,8 +95,8 @@ body {
 }
 
 #projects-pie-plot {
-  max-width: 20em;
-  margin-block: 2em;
-
-  overflow: visible;
+  display: block;
+  margin: auto;
+  width: 400px;   /* Double size */
+  height: 400px;  /* Ensure it's a square */
 }

@@ -92,9 +92,9 @@ body {
 
 #projects-pie-plot {
   display: block;
-  margin: auto; /* Center the SVG */
-  width: 200px; /* Ensure it's a square */
-  height: auto; /* Maintain aspect ratio */
+  margin: auto;
+  width: 400px;   /* Double size */
+  height: 400px;  /* Ensure it's a square */
 }
 
 #projects-pie-plot:has(path:hover) path:not(:hover) {
