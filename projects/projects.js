@@ -16,4 +16,41 @@ let arc = d3.arc().innerRadius(0).outerRadius(50)({
 });
 d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 
+let data = [1, 2];
+let total = 0;
+for (let d of data) {
+  total += d;
+}
+
+let angle = 0;
+let arcData = [];
+for (let d of data) {
+    let endAngle = angle + (d / total) * 2 * Math.PI;
+    arcData.push({ startAngle: angle, endAngle });
+    angle = endAngle;
+  }
+
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+let arcs = arcData.map((d) => arcGenerator(d));
+
+let colors = ['gold', 'purple'];
+let svg = d3.select('svg');
+arcs.forEach((arc, idx) => {
+    svg.append('path')
+      .attr('d', arc)
+      .attr('fill', colors[idx])
+      .attr('transform', 'translate(60, 60)'); // Centering the pie chart
+  });
+
+let sliceGenerator = d3.pie();
+let arcDataNew = sliceGenerator(data);
+let arcsNew = arcDataNew.map((d) => arcGenerator(d));
+
+arcsNew.forEach((arc, idx) => {
+  svg.append('path')
+    .attr('d', arc)
+    .attr('fill', colors[idx])
+    .attr('transform', 'translate(60, 60)');
+});
+
 loadProjects();
