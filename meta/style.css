@@ -153,3 +153,7 @@ circle.selected {
     stroke-dasharray: 5 3; /* ✅ Dashed line */
     animation: marching-ants 2s linear infinite; /* ✅ Moves dashes for animation */
 }
+
+.brush {
+    cursor: crosshair; /* Shows crosshair only when brushing */
+}

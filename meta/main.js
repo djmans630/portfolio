@@ -119,10 +119,10 @@ function processCommits() {
 
 function createScatterplot() {
   const svg = d3
-    .select('#chart')
-    .append('svg')
-    .attr('viewBox', `0 0 ${width} ${height}`)
-    .style('overflow', 'visible');
+    .select("#chart")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .style("overflow", "visible");
 
   xScale = d3.scaleTime()
     .domain(d3.extent(commits, (d) => d.datetime))
@@ -133,43 +133,61 @@ function createScatterplot() {
     .domain([0, 24])
     .range([height, 0]);
 
+  // ✅ Compute Min & Max Lines Edited
+  const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+
+  // ✅ Use scaleSqrt() for correct size perception
+  const rScale = d3
+    .scaleSqrt()
+    .domain([minLines, maxLines])
+    .range([2, 30]);
+
+  // ✅ Sort commits so large dots are drawn first
+  const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
+
+  // ✅ Add gridlines BEFORE the axes
+  const gridlines = svg.append("g").attr("class", "gridlines");
+
+  gridlines.call(
+    d3.axisLeft(yScale)
+      .tickSize(-width)
+      .tickFormat("")
+  );
+
   // ✅ Add X and Y axes
   const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale).tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
+  const yAxis = d3.axisLeft(yScale).tickFormat((d) => String(d % 24).padStart(2, "0") + ":00");
 
-  svg.append('g')
-    .attr('transform', `translate(0, ${height})`)
-    .call(xAxis);
+  svg.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+  svg.append("g").call(yAxis);
 
-  svg.append('g')
-    .attr('transform', `translate(0, 0)`)
-    .call(yAxis);
+  // ✅ Add dots AFTER gridlines and axes, using sorted commits
+  const dots = svg.append("g").attr("class", "dots");
 
-  // ✅ Add dots
-  svg.selectAll('circle')
-    .data(commits)
-    .join('circle')
-    .attr('cx', (d) => xScale(d.datetime))
-    .attr('cy', (d) => yScale(d.hourFrac))
-    .attr('r', (d) => Math.sqrt(d.totalLines) + 2) // ✅ Proportional radius
-    .attr('fill', 'steelblue')
-    .style('fill-opacity', 0.7)
-    .on('mouseenter', function (event, commit) {
-      d3.select(event.currentTarget).style('fill-opacity', 1);
+  dots.selectAll("circle")
+    .data(sortedCommits)
+    .join("circle")
+    .attr("cx", (d) => xScale(d.datetime))
+    .attr("cy", (d) => yScale(d.hourFrac))
+    .attr("r", (d) => rScale(d.totalLines))
+    .attr("fill", "steelblue")
+    .style("fill-opacity", 0.7)
+    .on("mouseenter", function (event, commit) {
+      d3.select(event.currentTarget).style("fill-opacity", 1);
       updateTooltipContent(commit);
       updateTooltipPosition(event);
       updateTooltipVisibility(true);
     })
-    .on('mousemove', (event) => {
+    .on("mousemove", (event) => {
       updateTooltipPosition(event);
     })
-    .on('mouseleave', function () {
-      d3.select(event.currentTarget).style('fill-opacity', 0.7);
-      updateTooltipContent(null);
+    .on("mouseleave", function () {
+      d3.select(event.currentTarget).style("fill-opacity", 0.7);
+      updateTooltipContent({});
       updateTooltipVisibility(false);
     });
 
-  // ✅ Add brushing functionality
+  // ✅ Add Brush
   const brush = d3.brush()
     .extent([[0, 0], [width, height]])
     .on("start brush end", brushed);
@@ -177,15 +195,22 @@ function createScatterplot() {
   svg.append("g")
     .attr("class", "brush")
     .call(brush);
+
+  // ✅ Raise dots and other elements after brush to restore hover functionality
+  svg.selectAll(".dots, .overlay ~ *").raise();
 }
+
 
 function brushed(event) {
-  brushSelection = event.selection; // ✅ Store brush selection globally
+  brushSelection = event.selection;
 
-  console.log("Brush selection:", brushSelection); // ✅ Debugging output
+  updateSelection();
 
-  updateSelection(); // ✅ Call updateSelection() when brushing occurs
+  if (!brushSelection) {
+    d3.select("body").style("cursor", "default"); // ✅ Reset cursor
+  }
 }
+
 
 function updateSelection() {
   if (!brushSelection) {
