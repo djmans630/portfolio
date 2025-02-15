@@ -182,11 +182,14 @@ function createScatterplot() {
   // ✅ Compute Min & Max Lines Edited
   const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
 
-  // ✅ Scale for Dot Size
+  // ✅ Use scaleSqrt() for correct size perception
   const rScale = d3
-  .scaleSqrt() // ✅ Switch from scaleLinear to scaleSqrt
-  .domain([minLines, maxLines]) // ✅ Input: Min & Max lines edited
-  .range([3, 20]); // ✅ Output: Smallest = 2px, Largest = 30px
+    .scaleSqrt()
+    .domain([minLines, maxLines])
+    .range([2, 30]);
+
+  // ✅ Sort commits so large dots are drawn first
+  const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
 
   // ✅ Add gridlines BEFORE the axes
   const gridlines = svg
@@ -212,12 +215,12 @@ function createScatterplot() {
     .attr('transform', `translate(0, 0)`)
     .call(yAxis);
 
-  // ✅ Add dots AFTER gridlines and axes
+  // ✅ Add dots AFTER gridlines and axes, using sorted commits
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
     .selectAll('circle')
-    .data(commits)
+    .data(sortedCommits) // ✅ Now using sorted commits!
     .join('circle')
     .attr('cx', (d) => xScale(d.datetime))
     .attr('cy', (d) => yScale(d.hourFrac))
@@ -239,6 +242,7 @@ function createScatterplot() {
       updateTooltipVisibility(false);
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
