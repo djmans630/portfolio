@@ -162,10 +162,12 @@ function createScatterplot() {
   .attr('r', 5)
   .attr('fill', 'steelblue')
   .on('mouseenter', (event, commit) => {
-    updateTooltipContent(commit); // ✅ Fills tooltip with data
+    updateTooltipContent(commit); // ✅ Fill tooltip with commit data
+    updateTooltipVisibility(true); // ✅ Show tooltip
   })
   .on('mouseleave', () => {
-    updateTooltipContent(null); // ✅ Clears tooltip when not hovering
+    updateTooltipContent({}); // ✅ Clear tooltip data
+    updateTooltipVisibility(false); // ✅ Hide tooltip
   });
 
 }
@@ -185,6 +187,15 @@ function updateTooltipContent(commit) {
   time.textContent = commit.time;
   author.textContent = commit.author;
   lines.textContent = commit.totalLines;
+}
+
+function updateTooltipVisibility(isVisible) {
+  const tooltip = document.getElementById('commit-tooltip');
+  if (isVisible) {
+      tooltip.classList.add('visible'); // ✅ Show tooltip
+  } else {
+      tooltip.classList.remove('visible'); // ✅ Hide tooltip
+  }
 }
 
 
