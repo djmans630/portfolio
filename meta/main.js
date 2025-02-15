@@ -264,7 +264,8 @@ function brushed(event) {
 function updateSelection() {
   if (!brushSelection) {
     d3.selectAll('circle').classed('selected', false);
-    updateSelectionCount(); // ✅ Also update count when clearing selection
+    updateSelectionCount();
+    updateLanguageBreakdown(); // ✅ Clear language breakdown too
     return;
   }
 
@@ -277,8 +278,10 @@ function updateSelection() {
       return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
     });
 
-  updateSelectionCount(); // ✅ Call after updating dot selection
+  updateSelectionCount();
+  updateLanguageBreakdown(); // ✅ Update language breakdown when selecting commits
 }
+
 
 
 function updateSelectionCount() {
@@ -294,8 +297,42 @@ function updateSelectionCount() {
   return selectedCommits;
 }
 
+function updateLanguageBreakdown() {
+  const selectedCommits = brushSelection
+    ? commits.filter(isCommitSelected)
+    : [];
 
+  const container = document.getElementById('language-breakdown');
 
+  if (selectedCommits.length === 0) {
+    container.innerHTML = ''; // ✅ Clear breakdown if nothing is selected
+    return;
+  }
+
+  // ✅ Get selected commits or all commits if none are selected
+  const relevantCommits = selectedCommits.length ? selectedCommits : commits;
+  const lines = relevantCommits.flatMap((d) => d.lines);
+
+  // ✅ Use d3.rollup to count lines per language
+  const breakdown = d3.rollup(
+    lines,
+    (v) => v.length,
+    (d) => d.type
+  );
+
+  // ✅ Update DOM with language breakdown
+  container.innerHTML = '';
+
+  for (const [language, count] of breakdown) {
+    const proportion = count / lines.length;
+    const formatted = d3.format('.1~%')(proportion);
+
+    container.innerHTML += `
+        <dt>${language}</dt>
+        <dd>${count} lines (${formatted})</dd>
+    `;
+  }
+}
 
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
@@ -308,8 +345,6 @@ function isCommitSelected(commit) {
 
   return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
 }
-
-
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
