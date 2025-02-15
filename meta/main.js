@@ -179,15 +179,25 @@ function createScatterplot() {
     .domain([0, 24])
     .range([height, 0]);
 
+  // ✅ Compute Min & Max Lines Edited
+  const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+
+  // ✅ Scale for Dot Size
+  const rScale = d3
+    .scaleLinear()
+    .domain([minLines, maxLines])
+    .range([2, 30]); // ✅ Smallest dot = 2px, Largest dot = 30px
+
   // ✅ Add gridlines BEFORE the axes
   const gridlines = svg
     .append('g')
-    .attr('class', 'gridlines');
+    .attr('class', 'gridlines')
+    .attr('transform', `translate(0, 0)`);
 
   gridlines.call(
     d3.axisLeft(yScale)
-      .tickSize(-width)  // ✅ Extend grid lines across the whole width
-      .tickFormat('')    // ✅ Hide labels
+      .tickSize(-width)
+      .tickFormat('')
   );
 
   // ✅ Add X and Y axes
@@ -199,35 +209,36 @@ function createScatterplot() {
     .call(xAxis);
 
   svg.append('g')
+    .attr('transform', `translate(0, 0)`)
     .call(yAxis);
 
-  // ✅ Add dots AFTER the gridlines and axes
+  // ✅ Add dots AFTER gridlines and axes
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
-  .selectAll('circle')
-  .data(commits)
-  .join('circle')
-  .attr('cx', (d) => xScale(d.datetime))
-  .attr('cy', (d) => yScale(d.hourFrac))
-  .attr('r', 5)
-  .attr('fill', 'steelblue')
-  .on('mouseenter', (event, commit) => {
-    updateTooltipContent(commit); // ✅ Fill tooltip with commit data
-    updateTooltipPosition(event); // ✅ Move tooltip near cursor
-    updateTooltipVisibility(true); // ✅ Show tooltip
-  })
-  .on('mousemove', (event) => {
-    updateTooltipPosition(event); // ✅ Ensure tooltip follows cursor smoothly
-  })
-  .on('mouseleave', () => {
-    updateTooltipContent({}); // ✅ Clear tooltip content
-    updateTooltipVisibility(false); // ✅ Hide tooltip
-  });
-
+    .selectAll('circle')
+    .data(commits)
+    .join('circle')
+    .attr('cx', (d) => xScale(d.datetime))
+    .attr('cy', (d) => yScale(d.hourFrac))
+    .attr('r', (d) => rScale(d.totalLines)) // ✅ Use rScale for size
+    .attr('fill', 'steelblue')
+    .style('fill-opacity', 0.7) // ✅ Transparency to see overlaps
+    .on('mouseenter', function (event, commit) {
+      d3.select(event.currentTarget).style('fill-opacity', 1); // ✅ Make dot fully visible
+      updateTooltipContent(commit);
+      updateTooltipPosition(event);
+      updateTooltipVisibility(true);
+    })
+    .on('mousemove', (event) => {
+      updateTooltipPosition(event); // ✅ Keeps tooltip near cursor
+    })
+    .on('mouseleave', function () {
+      d3.select(event.currentTarget).style('fill-opacity', 0.7); // ✅ Restore transparency
+      updateTooltipContent({});
+      updateTooltipVisibility(false);
+    });
 }
-
-
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
