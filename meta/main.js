@@ -139,28 +139,27 @@ function updateTooltipVisibility(isVisible) {
 function updateTooltipPosition(event) {
   const tooltip = document.getElementById('commit-tooltip');
 
-  if (!tooltip) return; // ✅ Avoid errors if tooltip is missing
+  if (!tooltip) return; // ✅ Avoids errors if tooltip doesn't exist
 
   const tooltipWidth = tooltip.offsetWidth;
   const tooltipHeight = tooltip.offsetHeight;
 
-  let x = event.clientX + 15; // ✅ Move tooltip slightly right
-  let y = event.clientY + 15; // ✅ Move tooltip slightly below cursor
+  let x = event.clientX + 10; // ✅ Moves tooltip slightly right
+  let y = event.clientY + 10; // ✅ Moves tooltip slightly below cursor
 
   // ✅ Prevent tooltip from going off the right edge
   if (x + tooltipWidth > window.innerWidth) {
-      x = event.clientX - tooltipWidth - 15; // Move left if near right edge
+      x = event.clientX - tooltipWidth - 10; // Move tooltip left if too close to right
   }
 
   // ✅ Prevent tooltip from going off the bottom edge
   if (y + tooltipHeight > window.innerHeight) {
-      y = event.clientY - tooltipHeight - 15; // Move above cursor if too low
+      y = event.clientY - tooltipHeight - 10; // Move tooltip above cursor if too low
   }
 
   tooltip.style.left = `${x}px`;
   tooltip.style.top = `${y}px`;
 }
-
 
 function createScatterplot() {
   const svg = d3
@@ -219,7 +218,7 @@ function createScatterplot() {
     updateTooltipVisibility(true); // ✅ Show tooltip
   })
   .on('mousemove', (event) => {
-    updateTooltipPosition(event); // ✅ Keep tooltip following cursor
+    updateTooltipPosition(event); // ✅ Ensure tooltip follows cursor smoothly
   })
   .on('mouseleave', () => {
     updateTooltipContent({}); // ✅ Clear tooltip content

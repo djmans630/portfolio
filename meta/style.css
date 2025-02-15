@@ -49,28 +49,41 @@
     shape-rendering: crispEdges;
 }
 
-/* ✅ Tooltip Styling */
+/* ✅ Improved Tooltip Styling */
 .tooltip {
-    position: absolute; /* ✅ Ensure it moves dynamically */
-    background: rgba(255, 255, 255, 0.85); /* ✅ Semi-transparent */
+    position: absolute; /* ✅ Ensures dynamic positioning */
+    background: rgba(255, 255, 255, 0.9); /* ✅ Light background */
     border: 1px solid rgba(0, 0, 0, 0.15); /* ✅ Light border */
-    border-radius: 10px; /* ✅ Rounded corners */
-    padding: 10px 12px; /* ✅ Adds space inside tooltip */
+    border-radius: 8px; /* ✅ Smooth rounded corners */
+    padding: 10px 12px; /* ✅ Proper padding for readability */
     font-size: 14px;
     box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* ✅ Subtle shadow */
     max-width: 250px;
-    pointer-events: none; /* ✅ Prevents interference */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none; /* ✅ Prevents tooltip from interfering with cursor */
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.1s ease;
     opacity: 0;
     visibility: hidden;
-    backdrop-filter: blur(8px); /* ✅ Frosted glass effect */
+    backdrop-filter: blur(5px); /* ✅ Soft frosted-glass effect */
+    transform: translateY(10px); /* ✅ Slight animation on appearance */
 }
 
-/* ✅ Make the tooltip visible */
+/* ✅ When Tooltip is Visible */
 .tooltip.visible {
     opacity: 1;
     visibility: visible;
+    transform: translateY(0); /* ✅ Removes animation offset */
 }
+
+/* ✅ Tooltip Link Styling */
+.tooltip a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.tooltip a:hover {
+    text-decoration: underline;
+}
+
 
 /* ✅ Prevent tooltip from going off-screen */
 .tooltip {
