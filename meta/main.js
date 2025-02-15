@@ -139,6 +139,19 @@ function createScatterplot() {
     .domain([0, 24])
     .range([usableArea.bottom, usableArea.top]);
 
+  // ✅ Add gridlines BEFORE the axes
+  const gridlines = svg
+    .append('g')
+    .attr('class', 'gridlines')
+    .attr('transform', `translate(${usableArea.left}, 0)`);
+
+  gridlines.call(
+    d3.axisLeft(yScale)
+      .tickSize(-usableArea.width)
+      .tickFormat('')
+  );
+
+  // ✅ Add X and Y axes
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale).tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
 
@@ -150,6 +163,7 @@ function createScatterplot() {
     .attr('transform', `translate(${usableArea.left}, 0)`)
     .call(yAxis);
 
+  // ✅ Add dots AFTER the gridlines and axes
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
