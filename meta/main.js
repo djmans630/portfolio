@@ -52,6 +52,20 @@ function processCommits() {
     });
 }
 
+function displayStats() {
+  processCommits(); // ✅ Ensure commit data is processed
+
+  const dl = d3.select('#stats').append('dl').attr('class', 'stats');
+
+  // ✅ Total LOC
+  dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
+  dl.append('dd').text(data.length);
+
+  // ✅ Total Commits
+  dl.append('dt').text('Commits');
+  dl.append('dd').text(commits.length);
+}
+
 function updateTooltipContent(commit) {
   const link = document.getElementById('commit-link');
   const date = document.getElementById('commit-date');
@@ -59,7 +73,7 @@ function updateTooltipContent(commit) {
   const author = document.getElementById('commit-author');
   const lines = document.getElementById('commit-lines');
 
-  if (!commit) return; // Prevent errors if no commit is selected
+  if (!commit) return;
 
   link.href = commit.url;
   link.textContent = commit.id;
@@ -71,32 +85,24 @@ function updateTooltipContent(commit) {
 
 function updateTooltipVisibility(isVisible) {
   const tooltip = document.getElementById('commit-tooltip');
-  if (isVisible) {
-    tooltip.classList.add('visible'); // ✅ Show tooltip
-  } else {
-    tooltip.classList.remove('visible'); // ✅ Hide tooltip
-  }
+  tooltip.classList.toggle('visible', isVisible);
 }
 
 function updateTooltipPosition(event) {
   const tooltip = document.getElementById('commit-tooltip');
-
-  if (!tooltip) return; // ✅ Avoids errors if tooltip doesn't exist
+  if (!tooltip) return;
 
   const tooltipWidth = tooltip.offsetWidth;
   const tooltipHeight = tooltip.offsetHeight;
 
-  let x = event.clientX + 10; // ✅ Moves tooltip slightly right
-  let y = event.clientY + 10; // ✅ Moves tooltip slightly below cursor
+  let x = event.clientX + 10;
+  let y = event.clientY + 10;
 
-  // ✅ Prevent tooltip from going off the right edge
   if (x + tooltipWidth > window.innerWidth) {
-    x = event.clientX - tooltipWidth - 10; // Move tooltip left if too close to right
+    x = event.clientX - tooltipWidth - 10;
   }
-
-  // ✅ Prevent tooltip from going off the bottom edge
   if (y + tooltipHeight > window.innerHeight) {
-    y = event.clientY - tooltipHeight - 10; // Move tooltip above cursor if too low
+    y = event.clientY - tooltipHeight - 10;
   }
 
   tooltip.style.left = `${x}px`;
@@ -119,6 +125,32 @@ function createScatterplot() {
     .domain([0, 24])
     .range([height, 0]);
 
+  // ✅ Draw the dots
+  const dots = svg.append('g').attr('class', 'dots');
+
+  dots
+    .selectAll('circle')
+    .data(commits)
+    .join('circle')
+    .attr('cx', (d) => xScale(d.datetime))
+    .attr('cy', (d) => yScale(d.hourFrac))
+    .attr('r', 5)
+    .attr('fill', 'steelblue')
+    .on('mouseenter', function (event, commit) {
+      d3.select(event.currentTarget).attr('fill', 'orange');
+      updateTooltipContent(commit);
+      updateTooltipPosition(event);
+      updateTooltipVisibility(true);
+    })
+    .on('mousemove', (event) => {
+      updateTooltipPosition(event);
+    })
+    .on('mouseleave', function () {
+      d3.select(event.currentTarget).attr('fill', 'steelblue');
+      updateTooltipVisibility(false);
+    });
+
+  // ✅ Brushing
   const brush = d3.brush()
     .extent([[0, 0], [width, height]])
     .on("start brush end", brushed);
@@ -127,9 +159,8 @@ function createScatterplot() {
 }
 
 function brushed(event) {
-  brushSelection = event.selection; // ✅ Now properly updates globally
-
-  updateSelection(); // ✅ Call updateSelection() when brushing occurs
+  brushSelection = event.selection;
+  updateSelection();
 }
 
 function updateSelection() {
@@ -151,7 +182,6 @@ function updateSelection() {
 
 function updateSelectionCount(selectedCommits) {
   const countElement = document.getElementById('selection-count');
-
   countElement.textContent = selectedCommits.length
     ? `${selectedCommits.length} commits selected`
     : "No commits selected";
@@ -166,19 +196,12 @@ function updateLanguageBreakdown(selectedCommits) {
   }
 
   const lines = selectedCommits.flatMap((d) => d.lines);
+  const breakdown = d3.rollup(lines, (v) => v.length, (d) => d.type);
 
-  const breakdown = d3.rollup(
-    lines,
-    (v) => v.length,
-    (d) => d.type
-  );
-
-  container.innerHTML = ''; // ✅ Clear before adding new stats
-
+  container.innerHTML = '';
   for (const [language, count] of breakdown) {
     const proportion = count / lines.length;
     const formatted = d3.format('.1~%')(proportion);
-
     container.innerHTML += `
         <dt>${language}</dt>
         <dd>${count} lines (${formatted})</dd>
@@ -188,12 +211,9 @@ function updateLanguageBreakdown(selectedCommits) {
 
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
-
   const [[x0, y0], [x1, y1]] = brushSelection;
-
-  const x = xScale(commit.datetime); // ✅ Use datetime for X
-  const y = yScale(commit.hourFrac); // ✅ Use hourFrac for Y
-
+  const x = xScale(commit.datetime);
+  const y = yScale(commit.hourFrac);
   return x0 <= x && x <= x1 && y0 <= y && y <= y1;
 }
 
