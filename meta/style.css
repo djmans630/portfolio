@@ -2,7 +2,7 @@
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 1.5em; /* Space between each stat */
+    gap: 1.5em;
     max-width: 800px;
     margin: 1em auto;
     padding: 1em;
@@ -18,7 +18,7 @@
     text-transform: uppercase;
     color: #555;
     text-align: center;
-    margin-bottom: 0.2em; /* Space between label and number */
+    margin-bottom: 0.2em;
   }
   
   .stats dd {
@@ -52,7 +52,7 @@
   
   /* ✅ Fixed Tooltip Position */
   .tooltip {
-    position: fixed; /* Keep it in place when scrolling */
+    position: fixed;
     top: 1em;
     left: 1em;
     background: rgba(255, 255, 255, 0.9);
@@ -83,11 +83,11 @@
   
   /* ✅ Styles for Grid Lines */
   .gridlines path {
-    stroke: none; /* Hide the Y-axis path */
+    stroke: none;
   }
   
   .gridlines line {
-    stroke: #ccc; /* Light gray grid lines */
+    stroke: #ccc;
     stroke-opacity: 0.7;
     shape-rendering: crispEdges;
   }
