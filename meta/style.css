@@ -1,0 +1,17 @@
+.stats {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5em 1em;
+    max-width: 600px;
+    margin: 1em auto;
+  }
+  
+  .stats dt {
+    font-weight: bold;
+    text-align: right;
+  }
+  
+  .stats dd {
+    margin: 0;
+    text-align: left;
+  }
