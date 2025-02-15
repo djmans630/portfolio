@@ -8,6 +8,8 @@ const height = 600;
 
 let xScale, yScale; // ✅ Global variables
 
+let brushSelection = null; // ✅ Declare globally
+
 
 async function loadData() {
   data = await d3.csv('loc.csv', (row) => ({
@@ -257,38 +259,32 @@ function createScatterplot() {
 }
 
 function brushed(event) {
-  brushSelection = event.selection; // ✅ Update brush selection globally
-  updateSelection(); // ✅ Ensure selection function is triggered
+  brushSelection = event.selection; // ✅ Now properly updates globally
+
+  console.log("Brush selection:", brushSelection); // ✅ Debugging: Check if it updates
+  updateSelection(); // ✅ Call updateSelection() when brushing occurs
 }
+
 
 function updateSelection() {
   if (!brushSelection) {
     d3.selectAll('circle').classed('selected', false); // ✅ Clear selection
-    updateSelectionCount();
-    updateLanguageBreakdown();
+    updateSelectionCount([]);
+    updateLanguageBreakdown([]);
     return;
   }
+
+  const selectedCommits = commits.filter((commit) => isCommitSelected(commit));
 
   d3.selectAll('circle')
     .classed('selected', (d) => isCommitSelected(d)); // ✅ Use isCommitSelected()
 
-  updateSelectionCount();
-  updateLanguageBreakdown();
+  updateSelectionCount(selectedCommits); // ✅ Pass selected commits
+  updateLanguageBreakdown(selectedCommits); // ✅ Pass selected commits
 }
 
 
-
-
-function updateSelectionCount() {
-  const selectedCommits = brushSelection
-    ? commits.filter((commit) => {
-        const cx = xScale(commit.datetime);
-        const cy = yScale(commit.hourFrac);
-        const [[x0, y0], [x1, y1]] = brushSelection;
-        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-      })
-    : [];
-
+function updateSelectionCount(selectedCommits) {
   const countElement = document.getElementById('selection-count');
 
   countElement.textContent = selectedCommits.length
@@ -297,22 +293,36 @@ function updateSelectionCount() {
 }
 
 
-function updateLanguageBreakdown() {
-  const selectedCommits = brushSelection
-    ? commits.filter((commit) => {
-        const cx = xScale(commit.datetime);
-        const cy = yScale(commit.hourFrac);
-        const [[x0, y0], [x1, y1]] = brushSelection;
-        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-      })
-    : [];
 
+function updateLanguageBreakdown(selectedCommits) {
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
     container.innerHTML = "<p>No selection made</p>"; // ✅ Show message if empty
     return;
   }
+
+  const lines = selectedCommits.flatMap((d) => d.lines);
+
+  const breakdown = d3.rollup(
+    lines,
+    (v) => v.length,
+    (d) => d.type
+  );
+
+  container.innerHTML = ''; // ✅ Clear before adding new stats
+
+  for (const [language, count] of breakdown) {
+    const proportion = count / lines.length;
+    const formatted = d3.format('.1~%')(proportion);
+
+    container.innerHTML += `
+        <dt>${language}</dt>
+        <dd>${count} lines (${formatted})</dd>
+    `;
+  }
+}
+
 
   const lines = selectedCommits.flatMap((d) => d.lines);
 
