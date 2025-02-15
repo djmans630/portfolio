@@ -1,0 +1,46 @@
+name: Deploy and Update Code Statistics
+
+on:
+  push:
+    branches:
+      - main  # Runs when code is pushed to 'main' branch
+  pull_request:
+    branches:
+      - main  # Also runs when a PR is opened on 'main'
+
+permissions:
+  contents: write  # Allows GitHub Actions to push changes
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for Elocuent
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v18
+        with:
+          node-version: 18  # Ensure Node.js is installed
+
+      - name: Install Dependencies
+        run: npm install  # Ensure all dependencies are installed
+
+      - name: Run Elocuent
+        run: |
+          npx elocuent -d . -o meta/loc.csv  # Generate CSV file
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          mkdir -p meta
+          git pull
+          git add -f meta/loc.csv
+          git commit -m "Update code statistics" || echo "No changes to commit"
+          git push
