@@ -7,9 +7,7 @@ const width = 1000;
 const height = 600;
 
 let xScale, yScale; // ✅ Global variables
-
 let brushSelection = null; // ✅ Declare globally
-
 
 async function loadData() {
   data = await d3.csv('loc.csv', (row) => ({
@@ -33,7 +31,7 @@ function processCommits() {
       let { author, date, time, timezone, datetime } = first;
       let ret = {
         id: commit,
-        url: 'https://github.com/vis-society/lab-7/commit/' + commit,
+        url: `https://github.com/vis-society/lab-7/commit/${commit}`,
         author,
         date,
         time,
@@ -52,67 +50,6 @@ function processCommits() {
 
       return ret;
     });
-}
-
-function displayStats() {
-  processCommits(); // ✅ Ensure commit data is processed
-
-  const dl = d3.select('#stats').append('dl').attr('class', 'stats');
-
-  // ✅ Total LOC
-  dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
-  dl.append('dd').text(data.length);
-
-  // ✅ Total Commits
-  dl.append('dt').text('Commits');
-  dl.append('dd').text(commits.length);
-
-  // ✅ Number of Files
-  let numFiles = new Set(data.map(d => d.file)).size;
-  dl.append('dt').text('Files');
-  dl.append('dd').text(numFiles);
-
-  // ✅ Maximum Depth
-  let maxDepth = d3.max(data, d => d.depth);
-  dl.append('dt').text('Max Depth');
-  dl.append('dd').text(maxDepth);
-
-  // ✅ Longest Line Length
-  let longestLine = d3.max(data, d => d.length);
-  dl.append('dt').text('Longest Line');
-  dl.append('dd').text(longestLine);
-
-  // ✅ Maximum File Length
-  let maxFileLength = d3.max(
-    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
-    (d) => d[1]
-  );
-  dl.append('dt').text('Max File Length');
-  dl.append('dd').text(maxFileLength);
-
-  // ✅ Average File Length
-  let avgFileLength = d3.mean(
-    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
-    (d) => d[1]
-  );
-  dl.append('dt').text('Avg File Length');
-  dl.append('dd').text(avgFileLength.toFixed(2));
-
-  // ✅ Average Depth
-  let avgDepth = d3.mean(data, (d) => d.depth);
-  dl.append('dt').text('Avg Depth');
-  dl.append('dd').text(avgDepth.toFixed(2));
-
-  // ✅ Time of Day Most Work Done
-  let timeOfDay = d3.rollups(
-    data,
-    (v) => v.length,
-    (d) => Math.floor(d.datetime.getHours() / 6) // Buckets: 0-6, 6-12, 12-18, 18-24
-  );
-  let mostWorkPeriod = d3.greatest(timeOfDay, (d) => d[1])?.[0];
-  let periodLabels = ['Night', 'Morning', 'Afternoon', 'Evening'];
-  dl.append('dt').text('Most Work Done (Time)');
-  dl.append('dd').text(periodLabels[mostWorkPeriod]);
 }
 
 function updateTooltipContent(commit) {
@@ -135,9 +72,9 @@ function updateTooltipContent(commit) {
 function updateTooltipVisibility(isVisible) {
   const tooltip = document.getElementById('commit-tooltip');
   if (isVisible) {
-      tooltip.classList.add('visible'); // ✅ Show tooltip
+    tooltip.classList.add('visible'); // ✅ Show tooltip
   } else {
-      tooltip.classList.remove('visible'); // ✅ Hide tooltip
+    tooltip.classList.remove('visible'); // ✅ Hide tooltip
   }
 }
 
@@ -154,12 +91,12 @@ function updateTooltipPosition(event) {
 
   // ✅ Prevent tooltip from going off the right edge
   if (x + tooltipWidth > window.innerWidth) {
-      x = event.clientX - tooltipWidth - 10; // Move tooltip left if too close to right
+    x = event.clientX - tooltipWidth - 10; // Move tooltip left if too close to right
   }
 
   // ✅ Prevent tooltip from going off the bottom edge
   if (y + tooltipHeight > window.innerHeight) {
-      y = event.clientY - tooltipHeight - 10; // Move tooltip above cursor if too low
+    y = event.clientY - tooltipHeight - 10; // Move tooltip above cursor if too low
   }
 
   tooltip.style.left = `${x}px`;
@@ -177,128 +114,54 @@ function createScatterplot() {
     .domain(d3.extent(commits, (d) => d.datetime))
     .range([0, width])
     .nice();
-  
+
   yScale = d3.scaleLinear()
     .domain([0, 24])
     .range([height, 0]);
-  
-
-  // ✅ Compute Min & Max Lines Edited
-  const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
-
-  // ✅ Use scaleSqrt() for correct size perception
-  const rScale = d3
-    .scaleSqrt()
-    .domain([minLines, maxLines])
-    .range([2, 30]);
-
-  // ✅ Sort commits so large dots are drawn first
-  const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
-
-  // ✅ Add gridlines BEFORE the axes
-  const gridlines = svg
-    .append('g')
-    .attr('class', 'gridlines')
-    .attr('transform', `translate(0, 0)`);
-
-  gridlines.call(
-    d3.axisLeft(yScale)
-      .tickSize(-width)
-      .tickFormat('')
-  );
-
-  // ✅ Add X and Y axes
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale).tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
-
-  svg.append('g')
-    .attr('transform', `translate(0, ${height})`)
-    .call(xAxis);
-
-  svg.append('g')
-    .attr('transform', `translate(0, 0)`)
-    .call(yAxis);
-
-  // ✅ Add dots AFTER gridlines and axes, using sorted commits
-  const dots = svg.append('g').attr('class', 'dots');
-
-  dots
-    .selectAll('circle')
-    .data(sortedCommits) // ✅ Now using sorted commits!
-    .join('circle')
-    .attr('cx', (d) => xScale(d.datetime))
-    .attr('cy', (d) => yScale(d.hourFrac))
-    .attr('r', (d) => rScale(d.totalLines)) // ✅ Use rScale for size
-    .attr('fill', 'steelblue')
-    .style('fill-opacity', 0.7) // ✅ Transparency to see overlaps
-    .on('mouseenter', function (event, commit) {
-      d3.select(event.currentTarget).style('fill-opacity', 1); // ✅ Make dot fully visible
-      updateTooltipContent(commit);
-      updateTooltipPosition(event);
-      updateTooltipVisibility(true);
-    })
-    .on('mousemove', (event) => {
-      updateTooltipPosition(event); // ✅ Keeps tooltip near cursor
-    })
-    .on('mouseleave', function () {
-      d3.select(event.currentTarget).style('fill-opacity', 0.7); // ✅ Restore transparency
-      updateTooltipContent({});
-      updateTooltipVisibility(false);
-    });
 
   const brush = d3.brush()
-    .extent([[0, 0], [width, height]]) // ✅ Define brush area (entire chart)
-    .on("start brush end", brushed); // ✅ Call `brushed()` when user interacts
+    .extent([[0, 0], [width, height]])
+    .on("start brush end", brushed);
 
-  svg.append("g")
-    .attr("class", "brush")
-    .call(brush);
-
-  svg.selectAll('.dots, .overlay ~ *').raise();
-
+  svg.append("g").attr("class", "brush").call(brush);
 }
 
 function brushed(event) {
   brushSelection = event.selection; // ✅ Now properly updates globally
 
-  console.log("Brush selection:", brushSelection); // ✅ Debugging: Check if it updates
   updateSelection(); // ✅ Call updateSelection() when brushing occurs
 }
 
-
 function updateSelection() {
   if (!brushSelection) {
-    d3.selectAll('circle').classed('selected', false); // ✅ Clear selection
+    d3.selectAll('circle').classed('selected', false);
     updateSelectionCount([]);
     updateLanguageBreakdown([]);
     return;
   }
 
-  const selectedCommits = commits.filter((commit) => isCommitSelected(commit));
+  const selectedCommits = commits.filter(isCommitSelected);
 
   d3.selectAll('circle')
-    .classed('selected', (d) => isCommitSelected(d)); // ✅ Use isCommitSelected()
+    .classed('selected', (d) => isCommitSelected(d));
 
-  updateSelectionCount(selectedCommits); // ✅ Pass selected commits
-  updateLanguageBreakdown(selectedCommits); // ✅ Pass selected commits
+  updateSelectionCount(selectedCommits);
+  updateLanguageBreakdown(selectedCommits);
 }
-
 
 function updateSelectionCount(selectedCommits) {
   const countElement = document.getElementById('selection-count');
 
   countElement.textContent = selectedCommits.length
     ? `${selectedCommits.length} commits selected`
-    : "No commits selected"; // ✅ Properly update text
+    : "No commits selected";
 }
-
-
 
 function updateLanguageBreakdown(selectedCommits) {
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
-    container.innerHTML = "<p>No selection made</p>"; // ✅ Show message if empty
+    container.innerHTML = "<p>No selection made</p>";
     return;
   }
 
@@ -322,30 +185,6 @@ function updateLanguageBreakdown(selectedCommits) {
     `;
   }
 }
-
-
-  const lines = selectedCommits.flatMap((d) => d.lines);
-
-  const breakdown = d3.rollup(
-    lines,
-    (v) => v.length,
-    (d) => d.type
-  );
-
-  container.innerHTML = ''; // ✅ Clear before adding new stats
-
-  for (const [language, count] of breakdown) {
-    const proportion = count / lines.length;
-    const formatted = d3.format('.1~%')(proportion);
-
-    container.innerHTML += `
-        <dt>${language}</dt>
-        <dd>${count} lines (${formatted})</dd>
-    `;
-  }
-}
-
-
 
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
@@ -357,7 +196,6 @@ function isCommitSelected(commit) {
 
   return x0 <= x && x <= x1 && y0 <= y && y <= y1;
 }
-
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
