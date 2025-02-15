@@ -1,3 +1,13 @@
+/* ✅ Adds spacing between scatter plot and stats */
+#chart {
+    margin-bottom: 40px;  /* Push scatter plot down */
+}
+
+#stats {
+    margin-top: 40px;  /* Push stats block down */
+}
+
+/* ✅ Styles for Statistics Box */
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -9,33 +19,43 @@
     border-radius: 8px;
     text-align: center;
     background-color: #f9f9f9;
-  }
-  
-  .stats dt {
+}
+
+.stats dt {
     font-weight: bold;
     font-size: 0.9em;
     text-transform: uppercase;
     color: #555;
     text-align: center;
     margin-bottom: 0.2em; /* Space between label and number */
-  }
-  
-  .stats dd {
+}
+
+.stats dd {
     font-size: 1.8em;
     font-weight: bold;
     color: #222;
     margin: 0;
     text-align: center;
-  }
-  
-  /* ✅ Styles for Grid Lines */
-  .gridlines path {
+}
+
+/* ✅ Styles for Grid Lines */
+.gridlines path {
     stroke: none; /* Hide Y-axis path */
-  }
-  
-  .gridlines line {
+}
+
+.gridlines line {
     stroke: #ccc; /* Light gray grid lines */
     stroke-opacity: 0.7;
     shape-rendering: crispEdges;
-  }
-  
+}
+
+/* ✅ Hover Effect for Dots */
+circle {
+    transition: 200ms;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+circle:hover {
+    transform: scale(1.5);
+}
