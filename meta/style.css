@@ -50,25 +50,25 @@
     color: #222;
   }
   
-  /* ✅ Fixed Tooltip Position */
+  /* ✅ Styled Tooltip */
   .tooltip {
-    position: fixed;
-    top: 1em;
-    left: 1em;
+    position: absolute; /* ✅ Change from fixed to absolute for flexibility */
     background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     padding: 10px;
     font-size: 14px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     max-width: 250px;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    pointer-events: none; /* ✅ Prevents it from interfering with hover */
+    transition: opacity 0.3s ease, transform 0.1s ease;
+    opacity: 0; /* ✅ Initially hidden */
+    transform: translateY(-10px); /* ✅ Start slightly above */
   }
   
-  .tooltip[hidden] {
-    opacity: 0;
-    visibility: hidden;
+  .tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
   
   /* ✅ Tooltip Link Styling */
