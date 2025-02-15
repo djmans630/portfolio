@@ -263,19 +263,37 @@ function brushed(event) {
 
 function updateSelection() {
   if (!brushSelection) {
-    d3.selectAll('circle').classed('selected', false); // ✅ Deselect all dots if no selection
+    d3.selectAll('circle').classed('selected', false);
+    updateSelectionCount(); // ✅ Also update count when clearing selection
     return;
   }
 
-  const [[x0, y0], [x1, y1]] = brushSelection; // ✅ Get brush coordinates
+  const [[x0, y0], [x1, y1]] = brushSelection;
 
   d3.selectAll('circle')
     .classed('selected', (d) => {
       const cx = xScale(d.datetime);
       const cy = yScale(d.hourFrac);
-      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // ✅ True if inside selection
+      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
     });
+
+  updateSelectionCount(); // ✅ Call after updating dot selection
 }
+
+
+function updateSelectionCount() {
+  const selectedCommits = brushSelection
+    ? commits.filter(isCommitSelected)
+    : [];
+
+  const countElement = document.getElementById('selection-count');
+  countElement.textContent = `${
+    selectedCommits.length || 'No'
+  } commits selected`;
+
+  return selectedCommits;
+}
+
 
 
 
