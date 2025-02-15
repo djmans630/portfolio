@@ -134,6 +134,10 @@ circle:hover {
     transform: scale(1.5);
 }
 
+circle.selected {
+    fill: #ff6b6b; /* ✅ Highlight selected dots in red */
+  }
+
 @keyframes marching-ants {
     to {
       stroke-dashoffset: -8; /* Moves dashes left over time */
@@ -146,4 +150,4 @@ circle:hover {
     stroke-opacity: 0.7; /* ✅ Slight transparency */
     stroke-dasharray: 5 3; /* ✅ Dashed line */
     animation: marching-ants 2s linear infinite; /* ✅ Moves dashes for animation */
-  }
+}

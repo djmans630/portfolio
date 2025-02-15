@@ -255,8 +255,19 @@ function createScatterplot() {
 }
 
 function brushed(event) {
-  console.log(event); // ✅ See brush selection in console (for debugging)
+  const selection = event.selection;
+  if (!selection) return; // ✅ If no selection, exit function
+
+  const [[x0, y0], [x1, y1]] = selection; // ✅ Get brush coordinates
+
+  d3.selectAll('circle')
+    .classed('selected', (d) => {
+      const cx = xScale(d.datetime);
+      const cy = yScale(d.hourFrac);
+      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // ✅ True if inside selection
+    });
 }
+
 
 
 
