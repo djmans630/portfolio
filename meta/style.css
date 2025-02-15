@@ -49,26 +49,34 @@
     shape-rendering: crispEdges;
 }
 
+/* ✅ Tooltip Styling */
 .tooltip {
-    position: absolute; /* ✅ Positioned dynamically near mouse */
-    background: rgba(255, 255, 255, 0.85); /* ✅ Semi-transparent for subtle effect */
+    position: absolute; /* ✅ Ensure it moves dynamically */
+    background: rgba(255, 255, 255, 0.85); /* ✅ Semi-transparent */
     border: 1px solid rgba(0, 0, 0, 0.15); /* ✅ Light border */
     border-radius: 10px; /* ✅ Rounded corners */
-    padding: 12px; /* ✅ Adds space inside tooltip */
+    padding: 10px 12px; /* ✅ Adds space inside tooltip */
     font-size: 14px;
-    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* ✅ Subtle shadow for elevation */
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* ✅ Subtle shadow */
     max-width: 250px;
-    pointer-events: none; /* ✅ Prevents it from interfering with interactions */
-    transition: opacity 0.3s ease, transform 0.1s ease;
+    pointer-events: none; /* ✅ Prevents interference */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     opacity: 0;
     visibility: hidden;
     backdrop-filter: blur(8px); /* ✅ Frosted glass effect */
 }
 
+/* ✅ Make the tooltip visible */
 .tooltip.visible {
     opacity: 1;
     visibility: visible;
 }
+
+/* ✅ Prevent tooltip from going off-screen */
+.tooltip {
+    transform: translate(-50%, -100%); /* ✅ Moves above the cursor */
+}
+
 
 /* ✅ Tooltip Text Styling */
 dl.info {

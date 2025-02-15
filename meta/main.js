@@ -110,6 +110,54 @@ function displayStats() {
   dl.append('dd').text(periodLabels[mostWorkPeriod]);
 }
 
+function updateTooltipContent(commit) {
+  const link = document.getElementById('commit-link');
+  const date = document.getElementById('commit-date');
+  const time = document.getElementById('commit-time');
+  const author = document.getElementById('commit-author');
+  const lines = document.getElementById('commit-lines');
+
+  if (!commit) return; // Prevent errors if no commit is selected
+
+  link.href = commit.url;
+  link.textContent = commit.id;
+  date.textContent = commit.date;
+  time.textContent = commit.time;
+  author.textContent = commit.author;
+  lines.textContent = commit.totalLines;
+}
+
+function updateTooltipVisibility(isVisible) {
+  const tooltip = document.getElementById('commit-tooltip');
+  if (isVisible) {
+      tooltip.classList.add('visible'); // ✅ Show tooltip
+  } else {
+      tooltip.classList.remove('visible'); // ✅ Hide tooltip
+  }
+}
+
+function updateTooltipPosition(event) {
+  const tooltip = document.getElementById('commit-tooltip');
+  const tooltipWidth = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+  
+  let x = event.clientX + 15; // ✅ Offset slightly to the right
+  let y = event.clientY - tooltipHeight - 10; // ✅ Position above cursor
+
+  // ✅ Prevent tooltip from going off the right edge
+  if (x + tooltipWidth > window.innerWidth) {
+      x = event.clientX - tooltipWidth - 15; // Move tooltip to the left if it's too close to the right
+  }
+
+  // ✅ Prevent tooltip from going off the top of the screen
+  if (y < 0) {
+      y = event.clientY + 20; // Move tooltip below cursor if it's too high
+  }
+
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y}px`;
+}
+
 function createScatterplot() {
   const svg = d3
     .select('#chart')
@@ -163,40 +211,19 @@ function createScatterplot() {
   .attr('fill', 'steelblue')
   .on('mouseenter', (event, commit) => {
     updateTooltipContent(commit); // ✅ Fill tooltip with commit data
+    updateTooltipPosition(event); // ✅ Move tooltip near cursor
     updateTooltipVisibility(true); // ✅ Show tooltip
   })
+  .on('mousemove', (event) => {
+    updateTooltipPosition(event); // ✅ Ensure tooltip follows cursor
+  })
   .on('mouseleave', () => {
-    updateTooltipContent({}); // ✅ Clear tooltip data
+    updateTooltipContent({}); // ✅ Clear tooltip content
     updateTooltipVisibility(false); // ✅ Hide tooltip
   });
 
 }
 
-function updateTooltipContent(commit) {
-  const link = document.getElementById('commit-link');
-  const date = document.getElementById('commit-date');
-  const time = document.getElementById('commit-time');
-  const author = document.getElementById('commit-author');
-  const lines = document.getElementById('commit-lines');
-
-  if (!commit) return; // Prevent errors if no commit is selected
-
-  link.href = commit.url;
-  link.textContent = commit.id;
-  date.textContent = commit.date;
-  time.textContent = commit.time;
-  author.textContent = commit.author;
-  lines.textContent = commit.totalLines;
-}
-
-function updateTooltipVisibility(isVisible) {
-  const tooltip = document.getElementById('commit-tooltip');
-  if (isVisible) {
-      tooltip.classList.add('visible'); // ✅ Show tooltip
-  } else {
-      tooltip.classList.remove('visible'); // ✅ Hide tooltip
-  }
-}
 
 
 document.addEventListener('DOMContentLoaded', async () => {
