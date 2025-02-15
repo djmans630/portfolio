@@ -135,7 +135,9 @@ circle:hover {
 }
 
 circle.selected {
-    fill: #ff6b6b; /* ✅ Highlight selected dots in red */
+    fill: #ff6b6b; /* ✅ Change color when selected */
+    stroke: black;
+    stroke-width: 1px;
   }
 
 @keyframes marching-ants {

@@ -257,15 +257,15 @@ function createScatterplot() {
 }
 
 function brushed(event) {
-  brushSelection = event.selection; // ✅ Store brush selection coordinates
-  updateSelection(); // ✅ Call updateSelection to apply changes
+  brushSelection = event.selection; // ✅ Update brush selection globally
+  updateSelection(); // ✅ Ensure selection function is triggered
 }
 
 function updateSelection() {
   if (!brushSelection) {
-    d3.selectAll('circle').classed('selected', false);
+    d3.selectAll('circle').classed('selected', false); // ✅ Clear selection
     updateSelectionCount();
-    updateLanguageBreakdown(); // ✅ Clear language breakdown too
+    updateLanguageBreakdown();
     return;
   }
 
@@ -279,7 +279,7 @@ function updateSelection() {
     });
 
   updateSelectionCount();
-  updateLanguageBreakdown(); // ✅ Update language breakdown when selecting commits
+  updateLanguageBreakdown();
 }
 
 
@@ -290,11 +290,12 @@ function updateSelectionCount() {
     : [];
 
   const countElement = document.getElementById('selection-count');
-  countElement.textContent = `${
-    selectedCommits.length || 'No'
-  } commits selected`;
 
-  return selectedCommits;
+  if (selectedCommits.length === 0) {
+    countElement.textContent = "No commits selected"; // ✅ Properly update text
+  } else {
+    countElement.textContent = `${selectedCommits.length} commits selected`;
+  }
 }
 
 function updateLanguageBreakdown() {
@@ -305,23 +306,20 @@ function updateLanguageBreakdown() {
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
-    container.innerHTML = ''; // ✅ Clear breakdown if nothing is selected
+    container.innerHTML = "<p>No selection made</p>"; // ✅ Show message if empty
     return;
   }
 
-  // ✅ Get selected commits or all commits if none are selected
   const relevantCommits = selectedCommits.length ? selectedCommits : commits;
   const lines = relevantCommits.flatMap((d) => d.lines);
 
-  // ✅ Use d3.rollup to count lines per language
   const breakdown = d3.rollup(
     lines,
     (v) => v.length,
     (d) => d.type
   );
 
-  // ✅ Update DOM with language breakdown
-  container.innerHTML = '';
+  container.innerHTML = ''; // ✅ Clear before adding new stats
 
   for (const [language, count] of breakdown) {
     const proportion = count / lines.length;
@@ -333,6 +331,7 @@ function updateLanguageBreakdown() {
     `;
   }
 }
+
 
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
