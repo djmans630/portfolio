@@ -24,9 +24,9 @@ jobs:
           fetch-depth: 0  # Fetch full history for Elocuent
 
       - name: Set Up Node.js
-        uses: actions/setup-node@v18
+        uses: actions/setup-node@v20
         with:
-          node-version: 18  # Ensure Node.js is installed
+          node-version: 20  # Ensure Node.js is installed
 
       - name: Install Dependencies
         run: npm install  # Ensure all dependencies are installed
