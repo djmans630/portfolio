@@ -49,21 +49,23 @@
     shape-rendering: crispEdges;
 }
 
+/* ✅ Tooltip Styling */
 .tooltip {
     position: fixed;
     top: 1em;
     left: 1em;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 10px;
+    background: rgba(255, 255, 255, 0.8); /* ✅ Semi-transparent background */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* ✅ Light border */
+    border-radius: 8px; /* ✅ Rounded corners */
+    padding: 12px; /* ✅ Adds spacing */
     font-size: 14px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* ✅ Subtle shadow for elevation */
     max-width: 250px;
-    pointer-events: none; /* ✅ Prevents tooltip from blocking interactions */
+    pointer-events: none; /* ✅ Prevents it from interfering with interactions */
     transition: opacity 0.3s ease, transform 0.1s ease;
     opacity: 1;
     transform: translateY(0);
+    backdrop-filter: blur(8px); /* ✅ Frosted glass effect */
 }
 
 /* ✅ Tooltip Text Styling */
@@ -86,6 +88,7 @@ dl.info dd {
     font-weight: normal;
     color: #222;
 }
+
 
 /* ✅ Hover Effect for Dots */
 circle {
