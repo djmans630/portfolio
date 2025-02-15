@@ -1,3 +1,4 @@
+/* ✅ Styles for Statistics Box */
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -28,19 +29,30 @@
     text-align: center;
   }
   
-  /* ✅ Styles for Grid Lines */
-  .gridlines path {
-    stroke: none; /* Hide Y-axis path */
+  /* ✅ Grid Layout for Tooltip */
+  dl.info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 10px;
+    text-align: left;
+    margin: 0;
+    font-size: 14px;
   }
   
-  .gridlines line {
-    stroke: #ccc; /* Light gray grid lines */
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges;
+  dl.info dt {
+    font-weight: bold;
+    color: #555;
   }
-
+  
+  dl.info dd {
+    margin: 0;
+    font-weight: normal;
+    color: #222;
+  }
+  
+  /* ✅ Fixed Tooltip Position */
   .tooltip {
-    position: fixed; /* Keep it visible on screen */
+    position: fixed; /* Keep it in place when scrolling */
     top: 1em;
     left: 1em;
     background: rgba(255, 255, 255, 0.9);
@@ -50,7 +62,7 @@
     font-size: 14px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     max-width: 250px;
-    pointer-events: none; /* Prevents it from interfering with mouse movement */
+    pointer-events: none;
     transition: opacity 0.3s ease;
   }
   
@@ -59,6 +71,7 @@
     visibility: hidden;
   }
   
+  /* ✅ Tooltip Link Styling */
   .tooltip a {
     color: #007bff;
     text-decoration: none;
@@ -66,5 +79,27 @@
   
   .tooltip a:hover {
     text-decoration: underline;
+  }
+  
+  /* ✅ Styles for Grid Lines */
+  .gridlines path {
+    stroke: none; /* Hide the Y-axis path */
+  }
+  
+  .gridlines line {
+    stroke: #ccc; /* Light gray grid lines */
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+  }
+  
+  /* ✅ Hover Effect for Dots */
+  circle {
+    transition: 200ms;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  
+  circle:hover {
+    transform: scale(1.5);
   }
   
