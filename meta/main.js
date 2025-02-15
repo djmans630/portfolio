@@ -250,6 +250,8 @@ function createScatterplot() {
     .attr("class", "brush")
     .call(brush);
 
+  svg.selectAll('.dots, .overlay ~ *').raise();
+
 }
 
 function brushed(event) {
