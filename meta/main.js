@@ -6,6 +6,9 @@ let commits = []; // ✅ Store processed commit data
 const width = 1000;
 const height = 600;
 
+let xScale, yScale; // ✅ Global variables
+
+
 async function loadData() {
   data = await d3.csv('loc.csv', (row) => ({
     ...row,
@@ -168,16 +171,15 @@ function createScatterplot() {
     .attr('viewBox', `0 0 ${width} ${height}`)
     .style('overflow', 'visible');
 
-  const xScale = d3
-    .scaleTime()
+  xScale = d3.scaleTime()
     .domain(d3.extent(commits, (d) => d.datetime))
     .range([0, width])
     .nice();
-
-  const yScale = d3
-    .scaleLinear()
+  
+  yScale = d3.scaleLinear()
     .domain([0, 24])
     .range([height, 0]);
+  
 
   // ✅ Compute Min & Max Lines Edited
   const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
@@ -255,10 +257,17 @@ function createScatterplot() {
 }
 
 function brushed(event) {
-  const selection = event.selection;
-  if (!selection) return; // ✅ If no selection, exit function
+  brushSelection = event.selection; // ✅ Store brush selection coordinates
+  updateSelection(); // ✅ Call updateSelection to apply changes
+}
 
-  const [[x0, y0], [x1, y1]] = selection; // ✅ Get brush coordinates
+function updateSelection() {
+  if (!brushSelection) {
+    d3.selectAll('circle').classed('selected', false); // ✅ Deselect all dots if no selection
+    return;
+  }
+
+  const [[x0, y0], [x1, y1]] = brushSelection; // ✅ Get brush coordinates
 
   d3.selectAll('circle')
     .classed('selected', (d) => {
@@ -268,6 +277,19 @@ function brushed(event) {
     });
 }
 
+
+
+function isCommitSelected(commit) {
+  if (!brushSelection) return false;
+
+  const min = { x: brushSelection[0][0], y: brushSelection[0][1] };
+  const max = { x: brushSelection[1][0], y: brushSelection[1][1] };
+
+  const x = xScale(commit.datetime); // ✅ Use datetime instead of date
+  const y = yScale(commit.hourFrac);
+
+  return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+}
 
 
 
