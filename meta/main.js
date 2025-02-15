@@ -62,21 +62,40 @@ function displayStats() {
   let longestLine = d3.max(data, d => d.length);
   dl.append('dt').text('Longest Line');
   dl.append('dd').text(longestLine);
+
+  // ✅ Maximum File Length
+  let maxFileLength = d3.max(
+    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
+    (d) => d[1]
+  );
+  dl.append('dt').text('Max File Length');
+  dl.append('dd').text(maxFileLength);
+
+  // ✅ Average File Length
+  let avgFileLength = d3.mean(
+    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
+    (d) => d[1]
+  );
+  dl.append('dt').text('Avg File Length');
+  dl.append('dd').text(avgFileLength.toFixed(2));
+
+  // ✅ Average Depth
+  let avgDepth = d3.mean(data, (d) => d.depth);
+  dl.append('dt').text('Avg Depth');
+  dl.append('dd').text(avgDepth.toFixed(2));
+
+  // ✅ Time of Day Most Work Done
+  let timeOfDay = d3.rollups(
+    data,
+    (v) => v.length,
+    (d) => Math.floor(d.datetime.getHours() / 6) // Buckets: 0-6, 6-12, 12-18, 18-24
+  );
+  let mostWorkPeriod = d3.greatest(timeOfDay, (d) => d[1])?.[0];
+  let periodLabels = ['Night', 'Morning', 'Afternoon', 'Evening'];
+  dl.append('dt').text('Most Work Done (Time)');
+  dl.append('dd').text(periodLabels[mostWorkPeriod]);
 }
 
-async function loadData() {
-  data = await d3.csv('loc.csv', (row) => ({
-    ...row,
-    line: Number(row.line),
-    depth: Number(row.depth),
-    length: Number(row.length),
-    date: new Date(row.date + 'T00:00' + row.timezone),
-    datetime: new Date(row.datetime),
-  }));
-
-  displayStats(); // ✅ Display stats after loading data
-  createScatterplot(); // ✅ Call scatterplot function
-}
 
 function createScatterplot() {
   const svg = d3
