@@ -154,14 +154,39 @@ function createScatterplot() {
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
-    .selectAll('circle')
-    .data(commits)
-    .join('circle')
-    .attr('cx', (d) => xScale(d.datetime))
-    .attr('cy', (d) => yScale(d.hourFrac))
-    .attr('r', 5)
-    .attr('fill', 'steelblue');
+  .selectAll('circle')
+  .data(commits)
+  .join('circle')
+  .attr('cx', (d) => xScale(d.datetime))
+  .attr('cy', (d) => yScale(d.hourFrac))
+  .attr('r', 5)
+  .attr('fill', 'steelblue')
+  .on('mouseenter', (event, commit) => {
+    updateTooltipContent(commit); // ✅ Fills tooltip with data
+  })
+  .on('mouseleave', () => {
+    updateTooltipContent(null); // ✅ Clears tooltip when not hovering
+  });
+
 }
+
+function updateTooltipContent(commit) {
+  const link = document.getElementById('commit-link');
+  const date = document.getElementById('commit-date');
+  const time = document.getElementById('commit-time');
+  const author = document.getElementById('commit-author');
+  const lines = document.getElementById('commit-lines');
+
+  if (!commit) return; // Prevent errors if no commit is selected
+
+  link.href = commit.url;
+  link.textContent = commit.id;
+  date.textContent = commit.date;
+  time.textContent = commit.time;
+  author.textContent = commit.author;
+  lines.textContent = commit.totalLines;
+}
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();

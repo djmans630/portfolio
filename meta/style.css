@@ -49,6 +49,44 @@
     shape-rendering: crispEdges;
 }
 
+.tooltip {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    max-width: 250px;
+    pointer-events: none; /* ✅ Prevents tooltip from blocking interactions */
+    transition: opacity 0.3s ease, transform 0.1s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ✅ Tooltip Text Styling */
+dl.info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 10px;
+    text-align: left;
+    margin: 0;
+    font-size: 14px;
+}
+
+dl.info dt {
+    font-weight: bold;
+    color: #555;
+}
+
+dl.info dd {
+    margin: 0;
+    font-weight: normal;
+    color: #222;
+}
+
 /* ✅ Hover Effect for Dots */
 circle {
     transition: 200ms;
