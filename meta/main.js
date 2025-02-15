@@ -7,7 +7,7 @@ const width = 1000;
 const height = 600;
 
 let xScale, yScale; // ✅ Global variables
-
+let brushSelection = null; // ✅ Declare globally
 
 async function loadData() {
   data = await d3.csv('loc.csv', (row) => ({
@@ -31,7 +31,7 @@ function processCommits() {
       let { author, date, time, timezone, datetime } = first;
       let ret = {
         id: commit,
-        url: 'https://github.com/vis-society/lab-7/commit/' + commit,
+        url: `https://github.com/vis-society/lab-7/commit/${commit}`,
         author,
         date,
         time,
@@ -52,118 +52,6 @@ function processCommits() {
     });
 }
 
-function displayStats() {
-  processCommits(); // ✅ Ensure commit data is processed
-
-  const dl = d3.select('#stats').append('dl').attr('class', 'stats');
-
-  // ✅ Total LOC
-  dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
-  dl.append('dd').text(data.length);
-
-  // ✅ Total Commits
-  dl.append('dt').text('Commits');
-  dl.append('dd').text(commits.length);
-
-  // ✅ Number of Files
-  let numFiles = new Set(data.map(d => d.file)).size;
-  dl.append('dt').text('Files');
-  dl.append('dd').text(numFiles);
-
-  // ✅ Maximum Depth
-  let maxDepth = d3.max(data, d => d.depth);
-  dl.append('dt').text('Max Depth');
-  dl.append('dd').text(maxDepth);
-
-  // ✅ Longest Line Length
-  let longestLine = d3.max(data, d => d.length);
-  dl.append('dt').text('Longest Line');
-  dl.append('dd').text(longestLine);
-
-  // ✅ Maximum File Length
-  let maxFileLength = d3.max(
-    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
-    (d) => d[1]
-  );
-  dl.append('dt').text('Max File Length');
-  dl.append('dd').text(maxFileLength);
-
-  // ✅ Average File Length
-  let avgFileLength = d3.mean(
-    d3.rollups(data, (v) => d3.max(v, (d) => d.line), (d) => d.file),
-    (d) => d[1]
-  );
-  dl.append('dt').text('Avg File Length');
-  dl.append('dd').text(avgFileLength.toFixed(2));
-
-  // ✅ Average Depth
-  let avgDepth = d3.mean(data, (d) => d.depth);
-  dl.append('dt').text('Avg Depth');
-  dl.append('dd').text(avgDepth.toFixed(2));
-
-  // ✅ Time of Day Most Work Done
-  let timeOfDay = d3.rollups(
-    data,
-    (v) => v.length,
-    (d) => Math.floor(d.datetime.getHours() / 6) // Buckets: 0-6, 6-12, 12-18, 18-24
-  );
-  let mostWorkPeriod = d3.greatest(timeOfDay, (d) => d[1])?.[0];
-  let periodLabels = ['Night', 'Morning', 'Afternoon', 'Evening'];
-  dl.append('dt').text('Most Work Done (Time)');
-  dl.append('dd').text(periodLabels[mostWorkPeriod]);
-}
-
-function updateTooltipContent(commit) {
-  const link = document.getElementById('commit-link');
-  const date = document.getElementById('commit-date');
-  const time = document.getElementById('commit-time');
-  const author = document.getElementById('commit-author');
-  const lines = document.getElementById('commit-lines');
-
-  if (!commit) return; // Prevent errors if no commit is selected
-
-  link.href = commit.url;
-  link.textContent = commit.id;
-  date.textContent = commit.date;
-  time.textContent = commit.time;
-  author.textContent = commit.author;
-  lines.textContent = commit.totalLines;
-}
-
-function updateTooltipVisibility(isVisible) {
-  const tooltip = document.getElementById('commit-tooltip');
-  if (isVisible) {
-      tooltip.classList.add('visible'); // ✅ Show tooltip
-  } else {
-      tooltip.classList.remove('visible'); // ✅ Hide tooltip
-  }
-}
-
-function updateTooltipPosition(event) {
-  const tooltip = document.getElementById('commit-tooltip');
-
-  if (!tooltip) return; // ✅ Avoids errors if tooltip doesn't exist
-
-  const tooltipWidth = tooltip.offsetWidth;
-  const tooltipHeight = tooltip.offsetHeight;
-
-  let x = event.clientX + 10; // ✅ Moves tooltip slightly right
-  let y = event.clientY + 10; // ✅ Moves tooltip slightly below cursor
-
-  // ✅ Prevent tooltip from going off the right edge
-  if (x + tooltipWidth > window.innerWidth) {
-      x = event.clientX - tooltipWidth - 10; // Move tooltip left if too close to right
-  }
-
-  // ✅ Prevent tooltip from going off the bottom edge
-  if (y + tooltipHeight > window.innerHeight) {
-      y = event.clientY - tooltipHeight - 10; // Move tooltip above cursor if too low
-  }
-
-  tooltip.style.left = `${x}px`;
-  tooltip.style.top = `${y}px`;
-}
-
 function createScatterplot() {
   const svg = d3
     .select('#chart')
@@ -175,35 +63,10 @@ function createScatterplot() {
     .domain(d3.extent(commits, (d) => d.datetime))
     .range([0, width])
     .nice();
-  
+
   yScale = d3.scaleLinear()
     .domain([0, 24])
     .range([height, 0]);
-  
-
-  // ✅ Compute Min & Max Lines Edited
-  const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
-
-  // ✅ Use scaleSqrt() for correct size perception
-  const rScale = d3
-    .scaleSqrt()
-    .domain([minLines, maxLines])
-    .range([2, 30]);
-
-  // ✅ Sort commits so large dots are drawn first
-  const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
-
-  // ✅ Add gridlines BEFORE the axes
-  const gridlines = svg
-    .append('g')
-    .attr('class', 'gridlines')
-    .attr('transform', `translate(0, 0)`);
-
-  gridlines.call(
-    d3.axisLeft(yScale)
-      .tickSize(-width)
-      .tickFormat('')
-  );
 
   // ✅ Add X and Y axes
   const xAxis = d3.axisBottom(xScale);
@@ -217,110 +80,95 @@ function createScatterplot() {
     .attr('transform', `translate(0, 0)`)
     .call(yAxis);
 
-  // ✅ Add dots AFTER gridlines and axes, using sorted commits
-  const dots = svg.append('g').attr('class', 'dots');
-
-  dots
-    .selectAll('circle')
-    .data(sortedCommits) // ✅ Now using sorted commits!
+  // ✅ Add dots
+  svg.selectAll('circle')
+    .data(commits)
     .join('circle')
     .attr('cx', (d) => xScale(d.datetime))
     .attr('cy', (d) => yScale(d.hourFrac))
-    .attr('r', (d) => rScale(d.totalLines)) // ✅ Use rScale for size
+    .attr('r', (d) => Math.sqrt(d.totalLines) + 2) // ✅ Proportional radius
     .attr('fill', 'steelblue')
-    .style('fill-opacity', 0.7) // ✅ Transparency to see overlaps
+    .style('fill-opacity', 0.7)
     .on('mouseenter', function (event, commit) {
-      d3.select(event.currentTarget).style('fill-opacity', 1); // ✅ Make dot fully visible
+      d3.select(event.currentTarget).style('fill-opacity', 1);
       updateTooltipContent(commit);
       updateTooltipPosition(event);
       updateTooltipVisibility(true);
     })
     .on('mousemove', (event) => {
-      updateTooltipPosition(event); // ✅ Keeps tooltip near cursor
+      updateTooltipPosition(event);
     })
     .on('mouseleave', function () {
-      d3.select(event.currentTarget).style('fill-opacity', 0.7); // ✅ Restore transparency
-      updateTooltipContent({});
+      d3.select(event.currentTarget).style('fill-opacity', 0.7);
+      updateTooltipContent(null);
       updateTooltipVisibility(false);
     });
 
+  // ✅ Add brushing functionality
   const brush = d3.brush()
-    .extent([[0, 0], [width, height]]) // ✅ Define brush area (entire chart)
-    .on("start brush end", brushed); // ✅ Call `brushed()` when user interacts
+    .extent([[0, 0], [width, height]])
+    .on("start brush end", brushed);
 
   svg.append("g")
     .attr("class", "brush")
     .call(brush);
-
-  svg.selectAll('.dots, .overlay ~ *').raise();
-
 }
 
 function brushed(event) {
-  brushSelection = event.selection; // ✅ Store brush selection coordinates
-  updateSelection(); // ✅ Call updateSelection to apply changes
+  brushSelection = event.selection; // ✅ Store brush selection globally
+
+  console.log("Brush selection:", brushSelection); // ✅ Debugging output
+
+  updateSelection(); // ✅ Call updateSelection() when brushing occurs
 }
 
 function updateSelection() {
   if (!brushSelection) {
     d3.selectAll('circle').classed('selected', false);
     updateSelectionCount();
-    updateLanguageBreakdown(); // ✅ Clear language breakdown too
+    updateLanguageBreakdown();
     return;
   }
 
   const [[x0, y0], [x1, y1]] = brushSelection;
 
+  const selectedCommits = commits.filter((d) => {
+    const cx = xScale(d.datetime);
+    const cy = yScale(d.hourFrac);
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+  });
+
   d3.selectAll('circle')
-    .classed('selected', (d) => {
-      const cx = xScale(d.datetime);
-      const cy = yScale(d.hourFrac);
-      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-    });
+    .classed('selected', (d) => selectedCommits.some(c => c.id === d.id)); // ✅ Fix selection logic
 
-  updateSelectionCount();
-  updateLanguageBreakdown(); // ✅ Update language breakdown when selecting commits
+  updateSelectionCount(selectedCommits);
+  updateLanguageBreakdown(selectedCommits);
 }
 
-
-
-function updateSelectionCount() {
-  const selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
-    : [];
-
+function updateSelectionCount(selectedCommits = []) {
   const countElement = document.getElementById('selection-count');
-  countElement.textContent = `${
-    selectedCommits.length || 'No'
-  } commits selected`;
 
-  return selectedCommits;
+  countElement.textContent = selectedCommits.length
+    ? `${selectedCommits.length} commits selected`
+    : "No commits selected";
 }
 
-function updateLanguageBreakdown() {
-  const selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
-    : [];
-
+function updateLanguageBreakdown(selectedCommits = []) {
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
-    container.innerHTML = ''; // ✅ Clear breakdown if nothing is selected
+    container.innerHTML = "<p>No selection made</p>";
     return;
   }
 
-  // ✅ Get selected commits or all commits if none are selected
-  const relevantCommits = selectedCommits.length ? selectedCommits : commits;
-  const lines = relevantCommits.flatMap((d) => d.lines);
+  const lines = selectedCommits.flatMap((d) => d.lines);
 
-  // ✅ Use d3.rollup to count lines per language
   const breakdown = d3.rollup(
     lines,
     (v) => v.length,
     (d) => d.type
   );
 
-  // ✅ Update DOM with language breakdown
   container.innerHTML = '';
 
   for (const [language, count] of breakdown) {
@@ -337,13 +185,57 @@ function updateLanguageBreakdown() {
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
 
-  const min = { x: brushSelection[0][0], y: brushSelection[0][1] };
-  const max = { x: brushSelection[1][0], y: brushSelection[1][1] };
-
-  const x = xScale(commit.datetime); // ✅ Use datetime instead of date
+  const [[x0, y0], [x1, y1]] = brushSelection;
+  const x = xScale(commit.datetime);
   const y = yScale(commit.hourFrac);
 
-  return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+  return x0 <= x && x <= x1 && y0 <= y && y <= y1;
+}
+
+function updateTooltipContent(commit) {
+  const link = document.getElementById('commit-link');
+  const date = document.getElementById('commit-date');
+  const time = document.getElementById('commit-time');
+  const author = document.getElementById('commit-author');
+  const lines = document.getElementById('commit-lines');
+
+  if (!commit) {
+    link.textContent = "";
+    date.textContent = "";
+    time.textContent = "";
+    author.textContent = "";
+    lines.textContent = "";
+    return;
+  }
+
+  link.href = commit.url;
+  link.textContent = commit.id;
+  date.textContent = commit.date;
+  time.textContent = commit.time;
+  author.textContent = commit.author;
+  lines.textContent = commit.totalLines;
+}
+
+function updateTooltipVisibility(isVisible) {
+  const tooltip = document.getElementById('commit-tooltip');
+  tooltip.classList.toggle('visible', isVisible);
+}
+
+function updateTooltipPosition(event) {
+  const tooltip = document.getElementById('commit-tooltip');
+  if (!tooltip) return;
+
+  const tooltipWidth = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+
+  let x = event.clientX + 10;
+  let y = event.clientY + 10;
+
+  if (x + tooltipWidth > window.innerWidth) x = event.clientX - tooltipWidth - 10;
+  if (y + tooltipHeight > window.innerHeight) y = event.clientY - tooltipHeight - 10;
+
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y}px`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
