@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="../global.js" type="module"></script> <!-- ✅ Ensures Nav Bar is Included -->
+    <script src="https://d3js.org/d3.v7.min.js"></script> <!-- ✅ D3.js for Data Viz -->
+    <script src="main.js" type="module" defer></script> <!-- ✅ Keeps your existing script -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Meta Analysis | Website Code Stats</title>
+
+    <link rel="stylesheet" href="../style.css"> <!-- ✅ Ensures Site-Wide Styling -->
 </head>
 <body>
     <h1>Meta</h1>
-    <p>This Page Includes Stats About the Code of this Website
-    </p>
+    <p>This page includes statistics and visualizations about the code of this website.</p>
+
+    <div id="stats"></div> <!-- ✅ Placeholder for CSV Data -->
+
 </body>
 </html>
