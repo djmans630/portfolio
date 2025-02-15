@@ -38,4 +38,33 @@
     stroke-opacity: 0.7;
     shape-rendering: crispEdges;
   }
+
+  .tooltip {
+    position: fixed; /* Keep it visible on screen */
+    top: 1em;
+    left: 1em;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    max-width: 250px;
+    pointer-events: none; /* Prevents it from interfering with mouse movement */
+    transition: opacity 0.3s ease;
+  }
+  
+  .tooltip[hidden] {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .tooltip a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .tooltip a:hover {
+    text-decoration: underline;
+  }
   
