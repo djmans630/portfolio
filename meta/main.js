@@ -241,7 +241,21 @@ function createScatterplot() {
       updateTooltipContent({});
       updateTooltipVisibility(false);
     });
+
+  const brush = d3.brush()
+    .extent([[0, 0], [width, height]]) // ✅ Define brush area (entire chart)
+    .on("start brush end", brushed); // ✅ Call `brushed()` when user interacts
+
+  svg.append("g")
+    .attr("class", "brush")
+    .call(brush);
+
 }
+
+function brushed(event) {
+  console.log(event); // ✅ See brush selection in console (for debugging)
+}
+
 
 
 document.addEventListener('DOMContentLoaded', async () => {
