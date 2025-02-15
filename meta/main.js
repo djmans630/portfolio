@@ -72,17 +72,20 @@ function displayStats() {
 
 
 async function loadData() {
-  data = await d3.csv('loc.csv', (row) => ({
+  data = await d3.csv("loc.csv", (row) => ({
     ...row,
     line: Number(row.line),
     depth: Number(row.depth),
     length: Number(row.length),
-    date: new Date(row.date + 'T00:00' + row.timezone),
+    date: new Date(row.date + "T00:00" + row.timezone),
     datetime: new Date(row.datetime),
   }));
 
-  displayStats(); // ✅ Display stats after loading data
-  createScatterplot(); // ✅ Call scatterplot function
+  console.log("Data Loaded:", data); // ✅ Debugging log
+
+  processCommits(); // ✅ Ensure commits are processed first
+  displayStats(); // ✅ Make sure this function exists before calling it
+  createScatterplot(); // ✅ Create graph last
 }
 
 function processCommits() {
