@@ -184,9 +184,9 @@ function createScatterplot() {
 
   // ✅ Scale for Dot Size
   const rScale = d3
-    .scaleLinear()
-    .domain([minLines, maxLines])
-    .range([2, 30]); // ✅ Smallest dot = 2px, Largest dot = 30px
+  .scaleSqrt() // ✅ Switch from scaleLinear to scaleSqrt
+  .domain([minLines, maxLines]) // ✅ Input: Min & Max lines edited
+  .range([3, 20]); // ✅ Output: Smallest = 2px, Largest = 30px
 
   // ✅ Add gridlines BEFORE the axes
   const gridlines = svg
