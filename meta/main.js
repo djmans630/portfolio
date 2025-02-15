@@ -6,6 +6,20 @@ let commits = []; // ✅ Store processed commit data
 const width = 1000;
 const height = 600;
 
+async function loadData() {
+  data = await d3.csv('loc.csv', (row) => ({
+    ...row,
+    line: Number(row.line),
+    depth: Number(row.depth),
+    length: Number(row.length),
+    date: new Date(row.date + 'T00:00' + row.timezone),
+    datetime: new Date(row.datetime),
+  }));
+
+  displayStats(); // ✅ Display stats after loading data
+  createScatterplot(); // ✅ Call scatterplot function
+}
+
 function processCommits() {
   commits = d3
     .groups(data, (d) => d.commit)
@@ -95,7 +109,6 @@ function displayStats() {
   dl.append('dt').text('Most Work Done (Time)');
   dl.append('dd').text(periodLabels[mostWorkPeriod]);
 }
-
 
 function createScatterplot() {
   const svg = d3
