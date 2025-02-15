@@ -269,14 +269,8 @@ function updateSelection() {
     return;
   }
 
-  const [[x0, y0], [x1, y1]] = brushSelection;
-
   d3.selectAll('circle')
-    .classed('selected', (d) => {
-      const cx = xScale(d.datetime);
-      const cy = yScale(d.hourFrac);
-      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-    });
+    .classed('selected', (d) => isCommitSelected(d)); // ✅ Use isCommitSelected()
 
   updateSelectionCount();
   updateLanguageBreakdown();
@@ -284,23 +278,33 @@ function updateSelection() {
 
 
 
+
 function updateSelectionCount() {
   const selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
+    ? commits.filter((commit) => {
+        const cx = xScale(commit.datetime);
+        const cy = yScale(commit.hourFrac);
+        const [[x0, y0], [x1, y1]] = brushSelection;
+        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+      })
     : [];
 
   const countElement = document.getElementById('selection-count');
 
-  if (selectedCommits.length === 0) {
-    countElement.textContent = "No commits selected"; // ✅ Properly update text
-  } else {
-    countElement.textContent = `${selectedCommits.length} commits selected`;
-  }
+  countElement.textContent = selectedCommits.length
+    ? `${selectedCommits.length} commits selected`
+    : "No commits selected"; // ✅ Properly update text
 }
+
 
 function updateLanguageBreakdown() {
   const selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
+    ? commits.filter((commit) => {
+        const cx = xScale(commit.datetime);
+        const cy = yScale(commit.hourFrac);
+        const [[x0, y0], [x1, y1]] = brushSelection;
+        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+      })
     : [];
 
   const container = document.getElementById('language-breakdown');
@@ -310,8 +314,7 @@ function updateLanguageBreakdown() {
     return;
   }
 
-  const relevantCommits = selectedCommits.length ? selectedCommits : commits;
-  const lines = relevantCommits.flatMap((d) => d.lines);
+  const lines = selectedCommits.flatMap((d) => d.lines);
 
   const breakdown = d3.rollup(
     lines,
@@ -333,17 +336,18 @@ function updateLanguageBreakdown() {
 }
 
 
+
 function isCommitSelected(commit) {
   if (!brushSelection) return false;
 
-  const min = { x: brushSelection[0][0], y: brushSelection[0][1] };
-  const max = { x: brushSelection[1][0], y: brushSelection[1][1] };
+  const [[x0, y0], [x1, y1]] = brushSelection;
 
-  const x = xScale(commit.datetime); // ✅ Use datetime instead of date
-  const y = yScale(commit.hourFrac);
+  const x = xScale(commit.datetime); // ✅ Use datetime for X
+  const y = yScale(commit.hourFrac); // ✅ Use hourFrac for Y
 
-  return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+  return x0 <= x && x <= x1 && y0 <= y && y <= y1;
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
