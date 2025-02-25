@@ -6,20 +6,20 @@
         "year": "2025"
     },
     {
-        "title": "Iure ipsum id consequatur!",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Reiciendis explicabo porro qui doloribus hic, placeat quidem aliquam id magni, aut ex dolor iste aliquid provident. Voluptates, minima eveniet quo explicabo ipsum voluptatem omnis provident, veritatis quae nemo similique.",
+        "title": "Tracking Temperature Fluctuations in Female Mice",
+        "image": "/portfolio/lib/images/Project2Honest.jpg",
+        "description": "Every Four Days, Female Mice Experience Estrus, Resulting in Higher Body Temperatures",
         "year": "2025"
     },
     {
-        "title": "Magnam dolorem provident cumque!",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Consequatur ducimus repudiandae dolorum nemo? Nisi, eos assumenda iusto maiores totam perferendis nemo accusantium reprehenderit tenetur, magnam accusamus temporibus ab, ducimus perspiciatis esse doloremque enim. Obcaecati recusandae reiciendis hic maxime?",
+        "title": "Tracking Bike Traffic in the Boston area",
+        "image": "/portfolio/lib/images/Lab 7 Map.jpg",
+        "description": "An Interactive Mapbox plot showing the bike routes and bike traffic of Boston and Cambridge",
         "year": "2023"
     },
     {
-        "title": "Repudiandae aliquid reprehenderit totam?",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "title": "Interactive Tracking of Body Temperature and Activity Scores in Mice",
+        "image": "/portfolio/lib/images/Project_3_Example_Screenshot.jpg",
         "description": "Vero necessitatibus voluptates molestias, error inventore adipisci tenetur recusandae, alias itaque facere consectetur pariatur, corporis ullam eum tempore? Libero rem est voluptatum sint modi corrupti, eius ad possimus tempore quas?",
         "year": "2024"
     },
